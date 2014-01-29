@@ -1,4 +1,5 @@
-dotfiles
-========
+# Configs for thing
 
-Config files for various things
+Including:
+
+* fish shell
