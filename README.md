@@ -1,5 +1,3 @@
-# Configs for thing
-
-Including:
+# Configs for varous things
 
 * fish shell
