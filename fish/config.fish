@@ -23,5 +23,5 @@ set -x GIT_MERGE_AUTOEDIT no
 # Prompt (depends on the git_current_branch function)
 set fish_greeting ''
 function fish_prompt
-    printf '%s%s%s%s$ ' (set_color $fish_color_cwd) (prompt_pwd) (set_color normal) (git_current_branch)
+    printf '%sv/%s%s%s$ ' (set_color $fish_color_cwd) (prompt_pwd) (set_color normal) (git_current_branch)
 end
