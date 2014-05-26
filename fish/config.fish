@@ -23,6 +23,9 @@ alias gitflush 'git branch --merged master | grep -v master | xargs git branch -
 set -x EDITOR /usr/bin/vi
 set -x GIT_MERGE_AUTOEDIT no
 
+# PATH changes
+set -x PATH $PATH /home/vagrant/bin
+
 # Prompt (depends on the git_current_branch function)
 set fish_greeting ''
 function fish_prompt
