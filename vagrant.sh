@@ -4,7 +4,8 @@ HOME_DIR="/home/vagrant"
 SRC_DIR="$HOME_DIR/src"
 
 echo ""
-echo "**** Applying config to Vagrant"
+echo "Configuring vagrant from kmcphillips/dotfiles"
+echo ""
 
 if which fish &> /dev/null; then
   echo "**** Fish already installed at:"
@@ -38,4 +39,4 @@ cp -v fish/config.fish $FISH_CONFIG_DIR/
 cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
 
 echo ""
-echo "**** Done"
+echo "Done"
