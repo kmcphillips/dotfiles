@@ -11,7 +11,7 @@ else
   cd /tmp
   sudo aptitude install bc
   wget http://fishshell.com/files/2.1.0/linux/Ubuntu/fish_2.1.0-1~precise_amd64.deb
-  sudo dpkg -i http://fishshell.com/files/2.1.0/linux/Ubuntu/fish_2.1.0-1~precise_amd64.deb
+  sudo dpkg -i fish_2.1.0-1~precise_amd64.deb
 fi
 
 
