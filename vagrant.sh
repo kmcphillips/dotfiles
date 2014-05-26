@@ -3,20 +3,22 @@
 HOME_DIR="/home/vagrant"
 SRC_DIR="$HOME_DIR/src"
 
+echo ""
+echo "**** Applying config to Vagrant"
 
 if which fish &> /dev/null; then
-  echo "* Fish already installed at:"
+  echo "**** Fish already installed at:"
   which fish
 else
-  echo "* Installing fish shell"
+  echo "**** Installing fish shell"
   cd /tmp
   sudo aptitude install bc
   wget http://fishshell.com/files/2.1.0/linux/Ubuntu/fish_2.1.0-1~precise_amd64.deb
   sudo dpkg -i fish_2.1.0-1~precise_amd64.deb
 fi
 
-
-echo "* Cloning dotfiles"
+echo ""
+echo "**** Cloning dotfiles"
 if [ ! -d "$SRC_DIR/dotfiles" ]; then
   cd "$SRC_DIR"
   git clone https://github.com/kmcphillips/dotfiles.git
@@ -24,8 +26,8 @@ fi
 cd "$SRC_DIR/dotfiles"
 git pull
 
-
-echo "* Copying in config files"
+echo ""
+echo "**** Copying in config files"
 cd "$SRC_DIR/dotfiles"
 FISH_CONFIG_DIR="$HOME_DIR/.config/fish"
 
@@ -34,3 +36,6 @@ if [ ! -d "$FISH_CONFIG_DIR/functions" ]; then
 fi
 cp -v fish/config.fish $FISH_CONFIG_DIR/
 cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
+
+echo ""
+echo "**** Done"
