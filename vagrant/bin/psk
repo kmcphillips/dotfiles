@@ -1,0 +1,15 @@
+#!/usr/bin/env ruby
+require 'pry'
+if ARGV.first && ARGV.first.length > 0
+  jobs = `ps ax | grep -i "#{ARGV.first}"`
+  pids = jobs.split("\n").map{|l| l.split.first }
+  pids.reject!{|p| p == Process.pid.to_s }
+  command = "kill -9 #{pids.join(' ')}"
+
+  puts jobs
+  puts ""
+  puts "** Executing: #{command}"
+  `#{command}`
+else
+  puts "Usage: psg [pattern]"
+end

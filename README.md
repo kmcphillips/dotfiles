@@ -7,5 +7,5 @@
 For vagrant:
 
 ```
-curl https://raw.githubusercontent.com/kmcphillips/dotfiles/master/vagrant.sh | sh -
+curl https://raw.githubusercontent.com/kmcphillips/dotfiles/master/vagrant/vagrant.sh | sh -
 ```
