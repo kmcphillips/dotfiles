@@ -50,5 +50,19 @@ fi
 cp -v vagrant/bin/* $HOME_DIR/bin/
 chmod +x $HOME_DIR/bin/*
 
+
+echo ""
+echo "**** Updating system config files"
+grep PrintLastLog /etc/ssh/sshd_config > /dev/null
+if [ $? -eq 0 ];
+then
+  echo "PrintLastLog already exists in /etc/ssh/sshd_config"
+else
+  echo "Appending to sshd_config:"
+  echo "PrintLastLog no" | sudo tee -a /etc/ssh/sshd_config
+  sudo service ssh restart
+fi
+
+
 echo ""
 echo "Done"
