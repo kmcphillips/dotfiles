@@ -1,6 +1,7 @@
 #!/bin/bash
 
-SRC_DIR="/home/vagrant/src"
+HOME_DIR="/home/vagrant"
+SRC_DIR="$HOME_DIR/src"
 
 
 if which fish &> /dev/null; then
@@ -26,6 +27,10 @@ git pull
 
 echo "* Copying in config files"
 cd "$SRC_DIR/dotfiles"
-cp fish/config.fish /home/vagrant/.config/fish/
-mkdir /home/vagrant/.config/fish/functions
-cp fish/functions/* /home/vagrant/.config/fish/functions/
+FISH_CONFIG_DIR="$HOME_DIR/.config/fish"
+
+if [ ! -d "$FISH_CONFIG_DIR/functions" ]; then
+  mkdir $FISH_CONFIG_DIR/functions
+fi
+cp -v fish/config.fish $FISH_CONFIG_DIR/
+cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
