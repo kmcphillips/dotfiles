@@ -29,12 +29,3 @@ cd "$SRC_DIR/dotfiles"
 cp fish/config.fish /home/vagrant/.config/fish/
 mkdir /home/vagrant/.config/fish/functions
 cp fish/functions/* /home/vagrant/.config/fish/functions/
-
-
-if grep LINEMAN_AUTO_START ~/.bashrc
-then
-  echo "* Already in .bashrc"
-else
-  echo "* Append to .bashrc"
-  echo "export LINEMAN_AUTO_START=false" >> ~/.bashrc
-fi
