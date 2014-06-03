@@ -28,6 +28,15 @@ fi
 cp -v fish/config.fish $FISH_CONFIG_DIR/
 cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
 
+if [ ! -d "~/.bash" ]; then
+  mkdir ~/.bash
+fi
+if [ ! -d "~/.bash/git-aware-prompt" ]; then
+  cd "~/.bash"
+  git clone git://github.com/jimeh/git-aware-prompt.git
+  cd "$SRC_DIR/dotfiles"
+fi
+cp -v vagrant/.bash_profile ~/.bash_profile
 
 echo ""
 echo "**** Copying in bin files"
