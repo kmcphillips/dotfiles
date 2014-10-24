@@ -1,6 +1,7 @@
 # Configuration
 
 * Vagrant with fish shell
+* Vagrant bash config
 
 # Setup scripts
 

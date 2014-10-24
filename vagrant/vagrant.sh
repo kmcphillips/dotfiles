@@ -19,6 +19,18 @@ git pull
 
 
 echo ""
+echo "**** Checking for bash plugins"
+
+if [ ! -d "~/.bash" ]; then
+  mkdir ~/.bash
+fi
+if [ ! -d "~/.bash/git-aware-prompt" ]; then
+  cd ~/.bash
+  git clone git://github.com/jimeh/git-aware-prompt.git
+fi
+
+
+echo ""
 echo "**** Copying in config files"
 cd "$SRC_DIR/dotfiles"
 FISH_CONFIG_DIR="$HOME_DIR/.config/fish"
