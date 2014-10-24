@@ -32,7 +32,7 @@ fi
 
 echo ""
 echo "**** Copying in config files"
-cd "$SRC_DIR/dotfiles"
+cd "$SRC_DIR/dotfiles/vagrant"
 FISH_CONFIG_DIR="$HOME_DIR/.config/fish"
 if [ ! -d "$FISH_CONFIG_DIR/functions" ]; then
   mkdir $FISH_CONFIG_DIR/functions
