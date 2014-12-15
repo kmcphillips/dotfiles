@@ -44,7 +44,7 @@ fi
 cp -v fish/config.fish $FISH_CONFIG_DIR/
 cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
 
-cp -v vagrant/.bash_profile ~/.bash_profile
+cp -v .bash_profile ~/.bash_profile
 
 echo ""
 echo "**** Copying in bin files"
