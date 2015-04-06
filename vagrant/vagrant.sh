@@ -68,6 +68,9 @@ else
   sudo service ssh restart
 fi
 
+echo ""
+echo "**** Installing default gems"
+gem install pry grb
 
 echo ""
 echo "Done"
