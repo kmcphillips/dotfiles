@@ -44,3 +44,9 @@ function fish_prompt
     printf '%s%s%s%s$ ' (set_color $fish_color_cwd) (prompt_pwd) (set_color normal) (git_current_branch)
 end
 
+
+# sudo easy_install pip
+# sudo pip install thefuck
+function fuck
+    thefuck $history[2] | source
+end

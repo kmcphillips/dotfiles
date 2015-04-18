@@ -31,6 +31,11 @@ fi
 
 
 echo ""
+echo "**** Installing packages with apt"
+sudo apt-get install python-pip
+
+
+echo ""
 echo "**** Copying in config files"
 cd "$SRC_DIR/dotfiles/vagrant"
 FISH_CONFIG_DIR="$HOME_DIR/.config/fish"
@@ -45,6 +50,7 @@ cp -v fish/config.fish $FISH_CONFIG_DIR/
 cp -v fish/functions/* $FISH_CONFIG_DIR/functions/
 
 cp -v .bash_profile ~/.bash_profile
+
 
 echo ""
 echo "**** Copying in bin files"
@@ -68,9 +74,16 @@ else
   sudo service ssh restart
 fi
 
+
 echo ""
-echo "**** Installing default gems"
+echo "**** Installing gems"
 gem install pry grb
+
+
+echo ""
+echo "**** Installing packages with pip"
+sudo pip install thefuck
+
 
 echo ""
 echo "Done"
