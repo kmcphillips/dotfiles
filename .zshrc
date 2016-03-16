@@ -156,3 +156,7 @@ alias shupdate="git checkout master && git pull && bundle install && lineman cle
 # alias rt 'be ruby -Itest -I.'
 # alias srt 'be spring testunit'
 # alias flushmc 'echo "flush_all" | nc 127.0.0.1 11211'
+
+export EDITOR=vim
+export BUNDLER_EDITOR=/Users/kevin/bin/subl
+export GIT_MERGE_AUTOEDIT=no
