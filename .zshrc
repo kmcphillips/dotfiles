@@ -160,3 +160,9 @@ alias shupdate="git checkout master && git pull && bundle install && lineman cle
 export EDITOR=vim
 export BUNDLER_EDITOR=/Users/kevin/bin/subl
 export GIT_MERGE_AUTOEDIT=no
+export PRY=ohyes
+
+[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+
+chruby ruby-2.2.4
+
