@@ -151,7 +151,7 @@ alias rc="bundle exec rails console"
 alias rs="bundle exec rails server"
 alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
-alias shupdate="git checkout master && git pull && bundle install && lineman clean && bundle exec rake db:migrate db:test:prepare"
+alias shupdate="git checkout master && git pull && dev up && git checkout -"
 
 # alias rt 'be ruby -Itest -I.'
 # alias srt 'be spring testunit'
