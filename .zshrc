@@ -153,6 +153,9 @@ alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
 alias shupdate="git checkout master && git pull && dev up && git checkout -"
 
+# Remove conflicting aliases
+unalias grb
+
 # alias rt 'be ruby -Itest -I.'
 # alias srt 'be spring testunit'
 # alias flushmc 'echo "flush_all" | nc 127.0.0.1 11211'
@@ -161,6 +164,9 @@ export EDITOR=vim
 export BUNDLER_EDITOR=/Users/kevin/bin/subl
 export GIT_MERGE_AUTOEDIT=no
 export PRY=ohyes
+export IM_ALREADY_PRO_THANKS=1
+export IM_ALRDY_PR0_AT_WALRUSES_THX=1
+
 
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
 
