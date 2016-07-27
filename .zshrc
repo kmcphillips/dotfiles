@@ -156,10 +156,6 @@ alias shupdate="git checkout master && git pull && dev up && git checkout -"
 # Remove conflicting aliases
 unalias grb
 
-# alias rt 'be ruby -Itest -I.'
-# alias srt 'be spring testunit'
-# alias flushmc 'echo "flush_all" | nc 127.0.0.1 11211'
-
 export EDITOR=vim
 export BUNDLER_EDITOR=/Users/kevin/bin/subl
 export GIT_MERGE_AUTOEDIT=no
@@ -167,8 +163,17 @@ export PRY=ohyes
 export IM_ALREADY_PRO_THANKS=1
 export IM_ALRDY_PR0_AT_WALRUSES_THX=1
 
+# GPG
+#gpg-agent --daemon >/dev/null 2>&1
+#export GPG_TTY=$(tty)
+
+if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
+    source ~/.gnupg/.gpg-agent-info
+    export GPG_AGENT_INFO
+else
+    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
+fi
 
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
 
-chruby ruby-2.2.4
-
+# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
