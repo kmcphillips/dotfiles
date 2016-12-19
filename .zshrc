@@ -162,6 +162,7 @@ export GIT_MERGE_AUTOEDIT=no
 export PRY=ohyes
 export IM_ALREADY_PRO_THANKS=1
 export IM_ALRDY_PR0_AT_WALRUSES_THX=1
+export TDD=0
 
 # GPG
 #gpg-agent --daemon >/dev/null 2>&1
