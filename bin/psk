@@ -1,0 +1,53 @@
+#!/usr/bin/env ruby
+
+class ProcessList
+  def initialize(pattern)
+    @pattern = pattern
+
+    @lines = `#{ ps_command }`
+    @lines = @lines.split("\n")
+  end
+
+  def ps_command
+    "ps ax | grep -i \"#{ @pattern }\""
+  end
+
+  def lines_to_kill
+    @lines_to_kill ||= begin
+      @lines.reject do |line|
+        line.start_with?("#{ Process.pid } ") || line.include?(ps_command) || line.include?("grep -i #{ @pattern }")
+      end
+    end
+  end
+
+  def pids_to_kill
+    lines_to_kill.map{ |l| l.split.first }
+  end
+
+  def kill_command
+    "kill -9 #{ pids_to_kill.join(' ')}"
+  end
+
+  def execute!
+    `#{ kill_command }`
+  end
+
+  def executable?
+    lines_to_kill.any?
+  end
+end
+
+if ARGV.first && ARGV.first.length > 0
+  list = ProcessList.new(ARGV.first)
+
+  if list.executable?
+    puts list.lines_to_kill
+    puts ""
+    puts "** Executing: #{ list.kill_command }"
+    list.execute!
+  else
+    puts "** Nothing kill"
+  end
+else
+  puts "Usage: psg [pattern]"
+end
