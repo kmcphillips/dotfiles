@@ -163,6 +163,7 @@ export IM_ALREADY_PRO_THANKS=1
 export IM_ALRDY_PR0_AT_WALRUSES_THX=1
 export TDD=0
 export HEROKU_ORGANIZATION=shopify
+export MINITEST_DIFF="git diff --color"
 
 # GPG
 #gpg-agent --daemon >/dev/null 2>&1
