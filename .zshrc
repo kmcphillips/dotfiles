@@ -53,7 +53,7 @@ plugins=(git zsh-autosuggestions)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/Users/kevin/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/Users/kevin/bin:/Users/kevin/opt/flutter/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -141,7 +141,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
 alias p="git pull"
 alias gpr="git pull --rebase"
 alias gst="git status"
-alias gcm="git checkout master"
+alias gcm="git checkout main"
 alias gc="git commit"
 alias ga="git add -A"
 alias gca="git commit -a --amend --reuse-message=HEAD"
@@ -151,6 +151,7 @@ alias rs="bundle exec rails server"
 alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
 alias shupdate="git checkout master && git pull && dev up && git checkout -"
+alias herokuauth="HEROKU_ORGANIZATION=shopify heroku login --sso"
 
 # Remove conflicting aliases
 unalias grb
@@ -179,3 +180,8 @@ fi
 [ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
 
 # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
+
+export PATH="$HOME/.yarn/bin:$PATH"
+if [ -e /Users/kevin/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/kevin/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
+chruby 2.7.1
