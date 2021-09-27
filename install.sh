@@ -1,9 +1,17 @@
 #!/bin/bash
-# spin install
+# dotfiles install
 
-sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+if [ $SPIN ]; then
+  echo 'Installing dotfiles for spin...'
 
-cp ~/dotfiles/.zshrc ~/.zshrc
-cp ~/dotfiles/.zshrc_spin ~/.zshrc_spin
+  sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-echo 'source $HOME/.zshrc_spin' >> ~/.zshrc
+  cp ~/dotfiles/.zshrc ~/.zshrc
+  cp ~/dotfiles/.zshrc_spin ~/.zshrc_spin
+
+  echo 'source $HOME/.zshrc_spin' >> ~/.zshrc
+else
+  echo 'Installing dotfiles outside of spin...'
+
+  echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
+fi

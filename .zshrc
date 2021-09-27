@@ -159,5 +159,3 @@ export EDITOR=vim
 export BUNDLER_EDITOR="$(which code)"
 export GIT_MERGE_AUTOEDIT=no
 export MINITEST_DIFF="git diff --color"
-
-# source $HOME/.zshrc_osx
