@@ -1,5 +1,5 @@
 # Path to your oh-my-zsh installation.
-export ZSH=/Users/kevin/.oh-my-zsh
+export ZSH=$HOME/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -53,7 +53,7 @@ plugins=(git zsh-autosuggestions)
 
 # User configuration
 
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/Users/kevin/bin:/Users/kevin/opt/flutter/bin"
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$HOME/bin:$HOME/opt/flutter/bin"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -151,37 +151,13 @@ alias rs="bundle exec rails server"
 alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
 alias shupdate="git checkout master && git pull && dev up && git checkout -"
-alias herokuauth="HEROKU_ORGANIZATION=shopify heroku login --sso"
 
 # Remove conflicting aliases
 unalias grb
 
 export EDITOR=vim
-export BUNDLER_EDITOR=/Users/kevin/bin/subl
+export BUNDLER_EDITOR="$(which code)"
 export GIT_MERGE_AUTOEDIT=no
-export PRY=ohyes
-export IM_ALREADY_PRO_THANKS=1
-export IM_ALRDY_PR0_AT_WALRUSES_THX=1
-export TDD=0
-export HEROKU_ORGANIZATION=shopify
 export MINITEST_DIFF="git diff --color"
 
-# GPG
-#gpg-agent --daemon >/dev/null 2>&1
-#export GPG_TTY=$(tty)
-
-if [ -f ~/.gnupg/.gpg-agent-info ] && [ -n "$(pgrep gpg-agent)" ]; then
-    source ~/.gnupg/.gpg-agent-info
-    export GPG_AGENT_INFO
-else
-    eval $(gpg-agent --daemon --write-env-file ~/.gnupg/.gpg-agent-info)
-fi
-
-[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
-
-# test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-export PATH="$HOME/.yarn/bin:$PATH"
-if [ -e /Users/kevin/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/kevin/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
-chruby 2.7.1
+# source $HOME/.zshrc_osx
