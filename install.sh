@@ -9,6 +9,8 @@ if [ $SPIN ]; then
   cp ~/dotfiles/.zshrc ~/.zshrc
   cp ~/dotfiles/.zshrc_spin ~/.zshrc_spin
 
+  git clone https://github.com/zsh-users/zsh-autosuggestions /home/spin/.oh-my-zsh/custom/plugins/zsh-autosuggestions
+
   echo 'source $HOME/.zshrc_spin' >> ~/.zshrc
 else
   echo 'Installing dotfiles outside of spin...'
