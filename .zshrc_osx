@@ -1,3 +1,6 @@
+# PATH
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$HOME/bin:$HOME/opt/flutter/bin"
+
 # app aliases and bins
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 if [ ! -f /usr/local/bin/code ]; then
