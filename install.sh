@@ -6,14 +6,37 @@ if [ $SPIN ]; then
 
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
-  cp ~/dotfiles/.zshrc ~/.zshrc
-  cp ~/dotfiles/.zshrc_spin ~/.zshrc_spin
-
-  git clone https://github.com/zsh-users/zsh-autosuggestions /home/spin/.oh-my-zsh/custom/plugins/zsh-autosuggestions
-
+  cp -v ~/dotfiles/.zshrc ~/.zshrc
+  cp -v ~/dotfiles/.zshrc_spin ~/.zshrc_spin
   echo 'source $HOME/.zshrc_spin' >> ~/.zshrc
-else
-  echo 'Installing dotfiles outside of spin...'
 
+  if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  fi
+
+elif [[ $OSTYPE == 'darwin'* ]]; then
+  echo 'Installing dotfiles for OSX..'
+
+  cp -v ./.zshrc ~/.zshrc
+  cp -v ./.zshrc_osx ~/.zshrc_osx
   echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
+
+  if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  fi
+
+elif grep -q Ubuntu /etc/issue; then
+  echo 'Installing dotfiles for Ubuntu...'
+
+  cp -v ./.zshrc ~/.zshrc
+  cp -v ./.zshrc_ubuntu ~/.zshrc_ubuntu
+  echo 'source $HOME/.zshrc_ubuntu' >> ~/.zshrc
+
+  if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+  fi
+
+else
+  echo "Don't know how to install for this OS or env."
+  exit 1
 fi

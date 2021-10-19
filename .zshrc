@@ -144,12 +144,12 @@ alias gcm="git checkout main"
 alias gc="git commit"
 alias ga="git add -A"
 alias gca="git commit -a --amend --reuse-message=HEAD"
+alias psg="ps ax | grep -i"
 alias be="bundle exec"
-alias rc="bundle exec rails console"
-alias rs="bundle exec rails server"
+alias rc="bin/rails console"
+alias rs="bin/rails server"
 alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
-alias shupdate="git checkout master && git pull && dev up && git checkout -"
 
 # Remove conflicting aliases
 unalias grb

@@ -1,0 +1,13 @@
+export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:/home/kevin/bin"
+export PATH="$PATH:/usr/games"
+export PATH="$PATH:/snap/bin"
+export PATH="$PATH:/home/kevin/.local/bin" # python executables from pip/pip3
+export PATH="$PATH:/home/kevin/opt/swift/usr/bin"
+
+# rbenv shims
+export PATH="/home/kevin/.rbenv/bin:/home/kevin/.rbenv/shims:$PATH"
+rbenv rehash >/dev/null
+
+# nvm shims
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
