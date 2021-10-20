@@ -15,6 +15,7 @@ if [ $SPIN ]; then
   fi
 
   cp -v .gitattributes ~/.gitattributes
+  cat .gitconfig_spin >> ~/.gitconfig
 
 elif [[ $OSTYPE == 'darwin'* ]]; then
   echo 'Installing dotfiles for OSX..'
