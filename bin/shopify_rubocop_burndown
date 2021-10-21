@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-filename = "~/src/github.com/shopify/shopify/.rubocop_todo.yml"
+filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
 entries = []
 current = nil
 
