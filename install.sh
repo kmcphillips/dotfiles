@@ -17,6 +17,8 @@ if [ $SPIN ]; then
   cp -v .gitattributes ~/.gitattributes
   cat .gitconfig_spin >> ~/.gitconfig
 
+  gem install grb pry
+
 elif [[ $OSTYPE == 'darwin'* ]]; then
   echo 'Installing dotfiles for OSX..'
 
