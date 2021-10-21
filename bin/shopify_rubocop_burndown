@@ -1,0 +1,26 @@
+#!/usr/bin/env ruby
+filename = "~/src/github.com/shopify/shopify/.rubocop_todo.yml"
+entries = []
+current = nil
+
+File.foreach(filename).with_index do |line, line_num|
+  # new entry
+  if line.start_with?("# Offense count: ")
+    current = { auto_correct: false }
+    current[:line] = line_num
+    current[:count] = line.match(/# Offense count: (\d+)/)[1].to_i
+    raise "bad offense count" unless current[:count] > 0
+  elsif current.nil?
+    # consume the line
+  elsif line.start_with?("# Cop supports --auto-correct")
+    current[:auto_correct] = true
+  elsif !line.start_with?("#")
+    current[:cop] = line.strip.gsub(":", "")
+    entries << current
+    current = nil
+  end
+end
+
+entries.select { |e| e[:auto_correct] }.sort_by { |e| e[:count] }.first(10).each do |e|
+  puts "#{ e[:cop] }\n  offense count #{ e[:count] } (line #{ e[:line] })"
+end
