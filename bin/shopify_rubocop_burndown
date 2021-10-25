@@ -2,6 +2,7 @@
 filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
 entries = []
 current = nil
+result_limit = 12
 
 File.foreach(filename).with_index do |line, line_num|
   # new entry
@@ -21,6 +22,6 @@ File.foreach(filename).with_index do |line, line_num|
   end
 end
 
-entries.select { |e| e[:auto_correct] }.sort_by { |e| e[:count] }.first(10).each do |e|
+entries.select { |e| e[:auto_correct] }.sort_by { |e| e[:count] }.first(result_limit).each do |e|
   puts "#{ e[:cop] }\n  offense count #{ e[:count] } (line #{ e[:line] })"
 end
