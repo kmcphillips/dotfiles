@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
+
+output_lines = []
+current = :preroll
+skipped_lines = []
+
+File.foreach(filename).with_index do |line, line_num|
+  if current == :preroll
+    current = :require if line.start_with?("require:")
+    output_lines << line
+  elsif current == :require
+    current = :consume if !line.start_with?("  -")
+    output_lines << line
+  else
+    if line.start_with?("    -")
+      filename = line.match(/    - '(.+)'/)[1]
+      filepath = "#{ Dir.home }/src/github.com/shopify/shopify/#{ filename }"
+
+      if File.exist?(filepath)
+        output_lines << line
+      else
+        skipped_lines << filename
+      end
+    else
+      output_lines << line
+    end
+  end
+end
+
+puts "Found #{ skipped_lines.count } files that do not exist. Unique lines #{ skipped_lines.uniq.count }."
+
+skipped_lines.each do |f|
+  puts "  #{ f }"
+end
