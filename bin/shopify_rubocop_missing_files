@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
-filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
+rubocop_filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
 
 output_lines = []
 current = :preroll
 skipped_lines = []
 
-File.foreach(filename).with_index do |line, line_num|
+File.foreach(rubocop_filename).with_index do |line, line_num|
   if current == :preroll
     current = :require if line.start_with?("require:")
     output_lines << line
@@ -29,7 +29,10 @@ File.foreach(filename).with_index do |line, line_num|
 end
 
 puts "Found #{ skipped_lines.count } files that do not exist. Unique lines #{ skipped_lines.uniq.count }."
+puts "  rewriting file..."
 
-skipped_lines.each do |f|
-  puts "  #{ f }"
+File.open(rubocop_filename, 'w') do |f|
+  output_lines.each do |line|
+    f.puts line
+  end
 end

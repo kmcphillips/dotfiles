@@ -1,10 +1,10 @@
 #!/usr/bin/env ruby
-filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
+rubocop_filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
 entries = []
 current = nil
 result_limit = 12
 
-File.foreach(filename).with_index do |line, line_num|
+File.foreach(rubocop_filename).with_index do |line, line_num|
   # new entry
   if line.start_with?("# Offense count: ")
     current = { auto_correct: false }
