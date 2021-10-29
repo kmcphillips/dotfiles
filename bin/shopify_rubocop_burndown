@@ -30,5 +30,5 @@ if ARGV.any? { |a| a.match(/auto/) }
 end
 
 output_entries.sort_by { |e| e[:count] }.first(result_limit).each do |e|
-  puts "#{ e[:cop] }\n  offense count #{ e[:count] } (line #{ e[:line] })"
+  puts "#{ e[:cop] }\n  offense count #{ e[:count] }#{ e[:auto_correct] ? ' --auto-correct' : '' }"
 end
