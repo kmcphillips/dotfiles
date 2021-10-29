@@ -22,6 +22,13 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
   end
 end
 
-entries.select { |e| e[:auto_correct] }.sort_by { |e| e[:count] }.first(result_limit).each do |e|
+output_entries = entries
+
+if ARGV.any? { |a| a.match(/auto/) }
+  output_entries = entries.select { |e| e[:auto_correct] }
+  puts "Matching on --auto-complete only"
+end
+
+output_entries.sort_by { |e| e[:count] }.first(result_limit).each do |e|
   puts "#{ e[:cop] }\n  offense count #{ e[:count] } (line #{ e[:line] })"
 end
