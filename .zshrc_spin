@@ -4,4 +4,4 @@ export PATH="$PATH:$HOME/dotfiles/bin"
 unalias gcm
 alias gcm="git checkout master"
 
-alias shupdate="git checkout master && git pull && ./.spin/bin/update"
+alias shupdate="git checkout master && git pull && ./.spin/bin/update && git checkout -"
