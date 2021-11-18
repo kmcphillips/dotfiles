@@ -28,7 +28,7 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
   end
 end
 
-puts "Found #{ skipped_lines.count } files that do not exist. Unique lines #{ skipped_lines.uniq.count }."
+puts "Found #{ skipped_lines.count } files that do not exist. (#{ skipped_lines.uniq.count } unique files)"
 puts "  rewriting file..."
 
 File.open(rubocop_filename, 'w') do |f|
