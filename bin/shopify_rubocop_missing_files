@@ -13,7 +13,7 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
     current = :consume if !line.start_with?("  -")
     output_lines << line
   else
-    if line.start_with?("    -")
+    if line.start_with?("    -") && !line.include?("*")
       filename = line.match(/    - '(.+)'/)[1]
       filepath = "#{ Dir.home }/src/github.com/shopify/shopify/#{ filename }"
 
