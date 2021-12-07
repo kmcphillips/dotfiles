@@ -1,6 +1,8 @@
 #!/bin/bash
 # dotfiles install
 
+cd "$( cd "$( dirname "$0" )" && pwd )"
+
 if [ $SPIN ]; then
   echo 'Installing dotfiles for spin...'
 
