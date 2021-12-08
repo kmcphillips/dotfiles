@@ -1,4 +1,5 @@
 export PROMPT="🌀 $PROMPT"
 export PATH="$PATH:$HOME/dotfiles/bin"
 
-alias shupdate="git checkout master && git pull && ./.spin/bin/update && git checkout -"
+alias shupdate="git checkout main && git pull && ./.spin/bin/update && git checkout -"
+
