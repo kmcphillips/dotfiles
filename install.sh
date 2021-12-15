@@ -17,6 +17,7 @@ if [ $SPIN ]; then
   fi
 
   cp -v .gitattributes ~/.gitattributes
+  cp -v .gemrc ~/.gemrc
   cat .gitconfig_spin >> ~/.gitconfig
 
   gem install grb pry
@@ -33,6 +34,7 @@ elif [[ $OSTYPE == 'darwin'* ]]; then
   fi
 
   cp -v .gitattributes ~/.gitattributes
+  cp -v .gemrc ~/.gemrc
 
 elif grep -q Ubuntu /etc/issue; then
   echo 'Installing dotfiles for Ubuntu...'
@@ -46,6 +48,7 @@ elif grep -q Ubuntu /etc/issue; then
   fi
 
   cp -v .gitattributes ~/.gitattributes
+  cp -v .gemrc ~/.gemrc
 
 else
   echo "Don't know how to install for this OS or env."
