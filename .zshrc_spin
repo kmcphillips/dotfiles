@@ -3,3 +3,4 @@ export PATH="$PATH:$HOME/dotfiles/bin"
 
 alias shupdate="git checkout main && git pull && ./.spin/bin/update && git checkout -"
 
+alias refresh_secrets="systemctl restart gcs-secrets.service && systemctl restart template-config.service"
