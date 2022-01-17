@@ -1,5 +1,5 @@
 #!/usr/bin/env ruby
-rubocop_filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
+rubocop_filename = "#{ Dir.home }/src/github.com/Shopify/shopify/.rubocop_todo.yml"
 entries = []
 current = nil
 result_limit = 12

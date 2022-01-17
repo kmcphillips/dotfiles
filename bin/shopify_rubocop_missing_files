@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-rubocop_filename = "#{ Dir.home }/src/github.com/shopify/shopify/.rubocop_todo.yml"
+project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
+rubocop_filename = "#{ project_root }/.rubocop_todo.yml"
 
 output_lines = []
 current = :preroll
@@ -15,7 +16,7 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
   else
     if line.start_with?("    -") && !line.include?("*")
       filename = line.match(/    - '(.+)'/)[1]
-      filepath = "#{ Dir.home }/src/github.com/shopify/shopify/#{ filename }"
+      filepath = "#{ project_root }/#{ filename }"
 
       if File.exist?(filepath)
         output_lines << line
