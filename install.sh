@@ -20,6 +20,7 @@ if [ $SPIN ]; then
   cp -v .gemrc ~/.gemrc
   cat .gitconfig_spin >> ~/.gitconfig
 
+  cd ~/src/github.com/Shopify/shopify
   gem install grb pry
 
 elif [[ $OSTYPE == 'darwin'* ]]; then
