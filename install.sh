@@ -18,6 +18,7 @@ if [ $SPIN ]; then
 
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
+  cp -v .zlogin ~/.zlogin
   cat .gitconfig_spin >> ~/.gitconfig
 
   cd ~/src/github.com/Shopify/shopify
