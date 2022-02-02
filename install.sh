@@ -21,7 +21,6 @@ if [ $SPIN ]; then
   cp -v .zlogin ~/.zlogin
   cat .gitconfig_spin >> ~/.gitconfig
 
-  cd ~/src/github.com/Shopify/shopify
   gem install grb pry
 
 elif [[ $OSTYPE == 'darwin'* ]]; then
