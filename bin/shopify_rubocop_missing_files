@@ -14,8 +14,12 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
     current = :consume if !line.start_with?("  -")
     output_lines << line
   else
-    if line.start_with?("    -") && !line.include?("*")
-      filename = line.match(/    - '(.+)'/)[1]
+    if line.start_with?("    - ") && !line.include?("*")
+      filename = if match_data = line.match(/    - '(.+)'/)
+        match_data[1]
+      else
+        line.gsub("    - ", "").strip
+      end
       filepath = "#{ project_root }/#{ filename }"
 
       if File.exist?(filepath)
