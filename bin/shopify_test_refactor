@@ -1,0 +1,236 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "activesupport"
+  gem "rainbow"
+end
+
+require "active_support/core_ext"
+require "logger"
+require "open3"
+
+class TodoFile
+  attr_reader :lines
+
+  def initialize(filename)
+    @filename = filename
+    @lines = File.readlines(@filename)
+  end
+
+  def process_file
+    parse_state = :before
+
+    (0..(@lines.length)).each do |line_number|
+      line = @lines[line_number]
+
+      case parse_state
+      when :before
+        parse_state = :processing if line.start_with?("Cops/TestCaseSuperclass:")
+      when :processing
+        if line.blank?
+          parse_state = :done
+        elsif match_data = line.match(/    - '(.+)'/)
+          filename = match_data[1]
+          success = yield(filename, line_number)
+          if success
+            @lines[line_number] = "##{ line }"
+            write_file
+          end
+        end
+      when :done
+        # just consume and finish
+      end
+    end
+  end
+
+  private
+
+  def write_file
+    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+  end
+end
+
+class TestFile
+  class Failure < StandardError ; end
+
+  TEST_CASE_REGEX = / < TestCaseWithDatastores/
+
+  attr_reader :message, :filename
+
+  def initialize(filename)
+    @filename = filename
+    @macros = {
+      active_record_fixtures: false,
+      feature_rollout_cache: false,
+      feature_set_cache: false,
+      memcached: false,
+      redis: false,
+    }
+    @success = false
+    @message = nil
+    @original = nil
+    @lines = nil
+    @line = nil
+    @line_number = nil
+    @indent = nil
+  end
+
+  def fix
+    begin
+      # Load the test file
+      raise Failure, "does not exist" unless File.exist?(filename)
+      @original = File.read(filename)
+      @lines = File.readlines(filename)
+
+      # Make sure the file has a target for refactor
+      raise Failure, "skipping HermeticTestCase" if @original.match?(/HermeticTestCase/)
+      match_data = @original.match(TEST_CASE_REGEX)
+      raise Failure, "file has more than one TestCaseWithDatastores" if match_data.length > 1
+
+      # Extract the line we care about
+      @lines.each_with_index do |l, index|
+        if l.match?(TEST_CASE_REGEX)
+          @line_number = index
+          break
+        end
+      end
+      raise Failure, "for some reason could not find the line" unless @line_number
+      @line = @lines[@line_number]
+
+      # Figure out how much to indent the macros
+      begin
+        @indent = @line.match(/\A(\ *)[a-zA-Z]/)[1].length + 2
+      rescue => e
+        raise Failure, "could not parse indent #{ e.inspect }"
+      end
+
+      # Check the test actually runs and passes
+      output, success = run_test
+      raise Filure, "test did not pass on pre-run" unless success
+
+      # Try just switching without any macros
+      rewrite_line
+      output, success = run_test
+
+      # Then grind out the macros
+      if !success
+        loop do
+          if output.match(/ use_redis /) && !@macros[:redis]
+            @macros[:redis] = true
+          elsif output.match(/ use_memcached /) && !@macros[:memcached]
+            @macros[:memcached] = true
+          elsif output.match(/ use_feature_rollout_cache /) && !@macros[:feature_rollout_cache]
+            @macros[:feature_rollout_cache] = true
+          elsif output.match(/ use_feature_set_cache /) && !@macros[:feature_set_cache]
+            @macros[:feature_set_cache] = true
+          elsif !@macros[:active_record_fixtures]
+            @macros[:active_record_fixtures] = true
+          else
+            raise Failure, "cannot figure out how to add the macros #{ @macros.inspect }"
+          end
+
+          rewrite_line
+          output, success = run_test
+
+          break if success
+        end
+      end
+
+      @success = true
+    rescue Failure => e
+      revert_file
+      @success = false
+      @message = e.message
+    end
+  end
+
+  def success?
+    !!@success
+  end
+
+  private
+
+  def run_test
+    command = "bin/test #{ filename }"
+    stdout, stderr, status = Open3.capture3(command)
+    [stdout, status.success?]
+  end
+
+  def rewrite_line
+    replacement = " < ActiveSupport::TestCase"
+    if @macros.values.any?
+      @macros.each do |macro, val|
+        replacement = "#{ replacement }\n#{ ' ' * @indent }use_#{ macro }" if val
+      end
+      replacement = "#{ replacement }\n"
+    end
+    @lines[@line_number] = @line.sub(TEST_CASE_REGEX, replacement)
+    write_file
+  end
+
+  def write_file
+    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+  end
+
+  def revert_file
+    # TODO
+  end
+end
+
+class TestRefactorRunner
+  def run
+    raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
+    raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
+
+    log_start
+
+    TodoFile.new(rubocop_todo_file).process_file do |filename, line_number|
+      file = TestFile.new(filename)
+
+      print "#{ filename } "
+      file.fix
+
+      if file.success?
+        puts Rainbow("success").green
+        success_log.info("#{ filename }")
+      else
+        puts Rainbow(file.message).red
+        error_log.info("#{ filename } #{ file.message }")
+      end
+
+      file.success?
+    end
+
+    log_end
+  end
+
+  private
+
+  def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
+  def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
+
+  def log_start = [success_log, error_log].each { |l| "Starting #{ Time.now }" }
+  def log_end = [success_log, error_log].each { |l| "Finishing #{ Time.now }\n" }
+
+  def success_log
+    @success_log ||= begin
+      logger_file = File.open("#{ project_root }/test_refactor_success.log", File::WRONLY | File::APPEND | File::CREAT)
+      logger_file.sync = true
+      Logger.new(logger_file, level: Logger::INFO)
+    end
+  end
+
+  def error_log
+    @error_log ||= begin
+      logger_file = File.open("#{ project_root }/test_refactor_error.log", File::WRONLY | File::APPEND | File::CREAT)
+      logger_file.sync = true
+      Logger.new(logger_file, level: Logger::INFO)
+    end
+  end
+end
+
+TestRefactorRunner.new.run
