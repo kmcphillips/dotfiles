@@ -124,7 +124,7 @@ class TestFile
 
       # Check the test actually runs and passes
       output, success = run_test
-      raise Filure, "test did not pass on pre-run" unless success
+      raise Failure, "test failed first run without modification" unless success
 
       # Try just switching without any macros
       rewrite_line
