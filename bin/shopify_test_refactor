@@ -76,7 +76,7 @@ class TestFile
     @macros = {
       active_record_fixtures: false,
       feature_rollout_cache: false,
-      feature_set_cache: false,
+      feature_set_cache: false, # this isn't really used yet
       memcached: false,
       redis: false,
     }
@@ -129,17 +129,28 @@ class TestFile
       # Then grind out the macros
       if !success
         loop do
+          change = false
           if output.match(/ use_redis /) && !@macros[:redis]
             @macros[:redis] = true
-          elsif output.match(/ use_memcached /) && !@macros[:memcached]
+            change = true
+          end
+          if output.match(/ use_memcached /) && !@macros[:memcached]
             @macros[:memcached] = true
-          elsif output.match(/ use_feature_rollout_cache /) && !@macros[:feature_rollout_cache]
+            change = true
+          end
+          if output.match(/ use_feature_rollout_cache /) && !@macros[:feature_rollout_cache]
             @macros[:feature_rollout_cache] = true
-          elsif output.match(/ use_feature_set_cache /) && !@macros[:feature_set_cache]
+            change = true
+          end
+          if output.match(/ use_feature_set_cache /) && !@macros[:feature_set_cache]
             @macros[:feature_set_cache] = true
-          elsif !@macros[:active_record_fixtures]
+            change = true
+          end
+          if !change && !@macros[:active_record_fixtures]
             @macros[:active_record_fixtures] = true
-          else
+            change = true
+          end
+          if !change
             raise Failure, "cannot figure out how to add the macros #{ @macros.inspect }"
           end
 
@@ -206,7 +217,7 @@ class TestRefactorRunner
 
       if file.success?
         puts Rainbow("success").green
-        logger.info("#{ filename }")
+        logger.info("#{ filename } success")
       else
         puts Rainbow(file.message).red
         logger.error("#{ filename } #{ file.message }")
