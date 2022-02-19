@@ -16,9 +16,10 @@ require "open3"
 class TodoFile
   attr_reader :lines
 
-  def initialize(filename)
+  def initialize(filename, resume_filename: nil)
     @filename = filename
     @lines = File.readlines(@filename)
+    @resume_filename = resume_filename.presence
   end
 
   def process_file
@@ -29,16 +30,25 @@ class TodoFile
 
       case parse_state
       when :before
-        parse_state = :processing if line.start_with?("Cops/TestCaseSuperclass:")
-      when :processing
+        if line.start_with?("Cops/TestCaseSuperclass:")
+          parse_state = if @resume_filename
+            :resuming
+          else
+            :processing
+          end
+        end
+      when :processing, :resuming
         if line.blank?
           parse_state = :done
         elsif match_data = line.match(/    - '(.+)'/)
           filename = match_data[1]
-          success = yield(filename, line_number)
-          if success
-            @lines[line_number] = "##{ line }"
-            write_file
+          parse_state = :processing if parse_state == :resuming && filename == @resume_filename
+          if parse_state == :processing
+            success = yield(filename, line_number)
+            if success
+              @lines[line_number] = "##{ line }"
+              write_file
+            end
           end
         end
       when :done
@@ -89,6 +99,7 @@ class TestFile
       # Make sure the file has a target for refactor
       raise Failure, "skipping HermeticTestCase" if @original.match?(/HermeticTestCase/)
       match_data = @original.match(TEST_CASE_REGEX)
+      raise Failure, "file does not have TestCaseWithDatastores" unless match_data
       raise Failure, "file has more than one TestCaseWithDatastores" if match_data.length > 1
 
       # Extract the line we care about
@@ -177,7 +188,7 @@ class TestFile
   end
 
   def revert_file
-    # TODO
+    File.open(@filename, "w") { |f| f.write(@original) }
   end
 end
 
@@ -186,9 +197,9 @@ class TestRefactorRunner
     raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
     raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
 
-    log_start
+    log_all("Starting")
 
-    TodoFile.new(rubocop_todo_file).process_file do |filename, line_number|
+    TodoFile.new(rubocop_todo_file, resume_filename: ARGV[0]).process_file do |filename, line_number|
       file = TestFile.new(filename)
 
       print "#{ filename } "
@@ -205,7 +216,7 @@ class TestRefactorRunner
       file.success?
     end
 
-    log_end
+    log_all("Finished")
   end
 
   private
@@ -213,8 +224,7 @@ class TestRefactorRunner
   def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
   def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
 
-  def log_start = [success_log, error_log].each { |l| l.info("Starting #{ Time.now }") }
-  def log_end = [success_log, error_log].each { |l| l.info("Finishing #{ Time.now }\n") }
+  def log_all(message) = [success_log, error_log].each { |l| l.info(message) }
 
   def success_log
     @success_log ||= begin
