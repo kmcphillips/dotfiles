@@ -97,7 +97,6 @@ class TestFile
       @lines = File.readlines(filename)
 
       # Make sure the file has a target for refactor
-      raise Failure, "skipping HermeticTestCase" if @original.match?(/HermeticTestCase/)
       match_data = @original.match(TEST_CASE_REGEX)
       raise Failure, "file does not have TestCaseWithDatastores" unless match_data
       raise Failure, "file has more than one TestCaseWithDatastores" if match_data.length > 1
@@ -197,7 +196,7 @@ class TestRefactorRunner
     raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
     raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
 
-    log_all("Starting")
+    logger.info("Starting")
 
     TodoFile.new(rubocop_todo_file, resume_filename: ARGV[0]).process_file do |filename, line_number|
       file = TestFile.new(filename)
@@ -207,16 +206,16 @@ class TestRefactorRunner
 
       if file.success?
         puts Rainbow("success").green
-        success_log.info("#{ filename }")
+        logger.info("#{ filename }")
       else
         puts Rainbow(file.message).red
-        error_log.info("#{ filename } #{ file.message }")
+        logger.error("#{ filename } #{ file.message }")
       end
 
       file.success?
     end
 
-    log_all("Finished")
+    logger.info("Finished")
   end
 
   private
@@ -224,19 +223,9 @@ class TestRefactorRunner
   def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
   def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
 
-  def log_all(message) = [success_log, error_log].each { |l| l.info(message) }
-
-  def success_log
-    @success_log ||= begin
-      logger_file = File.open("#{ project_root }/test_refactor_success.log", File::WRONLY | File::APPEND | File::CREAT)
-      logger_file.sync = true
-      Logger.new(logger_file, level: Logger::INFO)
-    end
-  end
-
-  def error_log
-    @error_log ||= begin
-      logger_file = File.open("#{ project_root }/test_refactor_error.log", File::WRONLY | File::APPEND | File::CREAT)
+  def logger
+    @logger ||= begin
+      logger_file = File.open("#{ project_root }/test_refactor.log", File::WRONLY | File::APPEND | File::CREAT)
       logger_file.sync = true
       Logger.new(logger_file, level: Logger::INFO)
     end
