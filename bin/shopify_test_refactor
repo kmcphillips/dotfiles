@@ -166,6 +166,8 @@ class TestFile
       revert_file
       @success = false
       @message = e.message
+    ensure
+      revert_file unless @success
     end
   end
 
@@ -198,7 +200,7 @@ class TestFile
   end
 
   def revert_file
-    File.open(@filename, "w") { |f| f.write(@original) }
+    File.open(@filename, "w") { |f| f.write(@original) } if @original.present?
   end
 end
 
