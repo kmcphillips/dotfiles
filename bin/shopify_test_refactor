@@ -213,8 +213,8 @@ class TestRefactorRunner
   def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
   def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
 
-  def log_start = [success_log, error_log].each { |l| "Starting #{ Time.now }" }
-  def log_end = [success_log, error_log].each { |l| "Finishing #{ Time.now }\n" }
+  def log_start = [success_log, error_log].each { |l| l.info("Starting #{ Time.now }") }
+  def log_end = [success_log, error_log].each { |l| l.info("Finishing #{ Time.now }\n") }
 
   def success_log
     @success_log ||= begin
