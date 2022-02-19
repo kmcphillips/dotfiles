@@ -5,10 +5,11 @@ require "bundler/inline"
 
 gemfile do
   source "https://rubygems.org"
-  gem "activesupport"
+  gem "activesupport", "< 7.0"
   gem "rainbow"
 end
 
+require "active_support"
 require "active_support/core_ext"
 require "logger"
 require "open3"
