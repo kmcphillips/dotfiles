@@ -21,7 +21,8 @@ if [ $SPIN ]; then
   cp -v .zlogin ~/.zlogin
   cat .gitconfig_spin >> ~/.gitconfig
 
-  gem install grb pry
+  ## This doesn't work because it needs to be done in context of Shopify/shopify ruby version
+  # gem install grb pry
 
 elif [[ $OSTYPE == 'darwin'* ]]; then
   echo 'Installing dotfiles for OSX..'
