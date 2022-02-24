@@ -6,6 +6,7 @@ alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 if [ ! -f /usr/local/bin/code ]; then
   ln -s "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" /usr/local/bin/code
 fi
+alias s='spin shell'
 
 # GPG
 #gpg-agent --daemon >/dev/null 2>&1
