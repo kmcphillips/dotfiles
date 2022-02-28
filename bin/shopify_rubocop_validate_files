@@ -1,0 +1,139 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+require "bundler/inline"
+
+gemfile do
+  source "https://rubygems.org"
+  gem "activesupport", "< 7.0"
+  gem "rainbow"
+end
+
+require "active_support"
+require "active_support/core_ext"
+require "logger"
+require "open3"
+
+class TodoFile
+  attr_reader :lines
+
+  def initialize(filename)
+    @filename = filename
+    @lines = File.readlines(@filename)
+  end
+
+  def process_file
+    parse_state = :meta
+    current_cop = nil
+
+    (0..(@lines.length)).each do |line_number|
+      line = @lines[line_number]
+
+      case parse_state
+      when :meta
+        if line.start_with?(/[a-zA-Z]/) && !line.start_with?("require:")
+          parse_state = :cop
+          current_cop = line.split(":")[0].strip
+        end
+      when :cop
+        if line.blank?
+          parse_state = :meta
+          current_cop = nil
+        elsif match_data = line.match(/    - '?([^']+)'?/)
+          filename = match_data[1]
+          @lines[line_number] = "##{ line }"
+          write_file
+          success = yield(filename, line_number, current_cop)
+          if !success
+            @lines[line_number] = line
+            write_file
+          end
+        end
+      end
+    end
+  end
+
+  private
+
+  def write_file
+    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+  end
+end
+
+class ValidateFile
+  attr_reader :message, :filename
+
+  def initialize(filename)
+    @filename = filename
+    @success = false
+    @message = nil
+  end
+
+  def validate
+    if !File.exist?(filename)
+      @message = "does not exist"
+      @success = true
+    else
+      output, success = run_rubocop
+      @success = success
+      @message = if success
+        "violation fixed"
+      else
+        "violation found"
+      end
+    end
+
+    @success
+  end
+
+  def success?
+    !!@success
+  end
+
+  private
+
+  def run_rubocop
+    command = "bin/rubocop #{ filename }"
+    stdout, stderr, status = Open3.capture3(command)
+    [stdout, status.success?]
+  end
+end
+
+class TestRefactorRunner
+  def run
+    raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
+    raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
+
+    logger.info("Starting")
+
+    TodoFile.new(rubocop_todo_file).process_file do |filename, line_number, cop|
+      file = ValidateFile.new(filename)
+
+      print "#{ cop } #{ filename } "
+      file.validate
+
+      colour = file.success? ? :green : :red
+      puts Rainbow(file.message).send(colour)
+      logger.info("#{ filename } #{ file.message }")
+
+      file.success?
+    end
+
+    logger.info("Finished")
+  end
+
+  private
+
+  def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
+  def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
+
+  def logger
+    @logger ||= begin
+      logger_file = File.open("#{ project_root }/validate_files.log", File::WRONLY | File::APPEND | File::CREAT)
+      logger_file.sync = true
+      Logger.new(logger_file, level: Logger::INFO)
+    end
+  end
+end
+
+TestRefactorRunner.new.run
