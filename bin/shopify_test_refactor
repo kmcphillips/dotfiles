@@ -221,7 +221,7 @@ class TestFile
         replacement = "#{ replacement }\n#{ ' ' * @indent }include #{ module_name }"
       end
     end
-    replacement = "#{ replacement }\n"
+    replacement = "#{ replacement }\n" unless @modules.any?
     @lines[@line_number] = @line.sub(TEST_CASE_REGEX, replacement)
     write_file
   end
