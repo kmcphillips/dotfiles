@@ -102,9 +102,6 @@ class TestFile
       raise Failure, "file does not have TestCaseWithDatastores" unless match_data
       raise Failure, "file has more than one TestCaseWithDatastores" if match_data.length > 1
 
-      # Omit some tests we don't want to mess with
-      raise Failure, "skipping ApiDocumentation::GraphQL test" if @original.match(/ApiDocumentation::GraphQL/)
-
       # Extract the line we care about
       @lines.each_with_index do |l, index|
         if l.match?(TEST_CASE_REGEX)
