@@ -39,6 +39,8 @@ class TodoFile
         if line.blank?
           parse_state = :meta
           current_cop = nil
+        elsif ignore_cop?(current_cop)
+          # do nothing
         elsif match_data = line.match(/    - '?([^']+)'?/)
           filename = match_data[1]
           @lines[line_number] = "##{ line }"
@@ -54,6 +56,10 @@ class TodoFile
   end
 
   private
+
+  def ignore_cop?(cop)
+    ["Cops/ComponentNamespace"].include?(cop)
+  end
 
   def write_file
     File.open(@filename, "w") { |f| f.write(@lines.join("")) }
