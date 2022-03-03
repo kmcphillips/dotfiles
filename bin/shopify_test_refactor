@@ -69,6 +69,23 @@ class TestFile
   class Failure < StandardError ; end
 
   TEST_CASE_REGEX = / < TestCaseWithDatastores/
+  MODULE_ERRORS = {
+    "Resiliency::TestHelper" => [
+      "assert_resiliency_fallback",
+      "skip_resiliency_verifiers_for",
+      "allowlist_jobs_redis_from_resiliency_verifier",
+      "assert_redis_with_fallback",
+      "toxiproxy_from_redis",
+      "toxiproxy_redis_down",
+      "toxiproxy_elasticsearch_down",
+      "toxiproxy_mysql_down",
+      "toxiproxy_memcache_down",
+    ],
+    "AuditEventTestHelper" => [
+      "assert_audit_log",
+      "enable_audit_events",
+    ],
+  }
 
   attr_reader :message, :filename
 
@@ -81,6 +98,7 @@ class TestFile
       memcached: false,
       redis: false,
     }
+    @modules = []
     @success = false
     @message = nil
     @original = nil
@@ -151,8 +169,14 @@ class TestFile
             @macros[:active_record_fixtures] = true
             change = true
           end
+          MODULE_ERRORS.each do |module_name, errors|
+            if !@modules.include?(module_name) && errors.any? { |e| output.match(e) }
+              @modules << module_name
+              change = true
+            end
+          end
           if !change
-            raise Failure, "cannot figure out how to add the macros #{ @macros.inspect }"
+            raise Failure, "cannot figure out how to update test #{ @macros.inspect } #{ @modules.inspect }"
           end
 
           rewrite_line
@@ -190,8 +214,14 @@ class TestFile
       @macros.each do |macro, val|
         replacement = "#{ replacement }\n#{ ' ' * @indent }use_#{ macro }" if val
       end
-      replacement = "#{ replacement }\n"
     end
+    if @modules.any?
+      replacement = "#{ replacement }\n" if @macros.values.any?
+      @modules.uniq.each do |module_name|
+        replacement = "#{ replacement }\n#{ ' ' * @indent }include #{ module_name }"
+      end
+    end
+    replacement = "#{ replacement }\n"
     @lines[@line_number] = @line.sub(TEST_CASE_REGEX, replacement)
     write_file
   end
