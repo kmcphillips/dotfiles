@@ -117,9 +117,9 @@ class TestFile
       @lines = File.readlines(filename)
 
       # Make sure the file has a target for refactor
-      match_data = @original.match(TEST_CASE_REGEX)
-      raise Failure, "file does not have TestCaseWithDatastores" unless match_data
-      raise Failure, "file has more than one TestCaseWithDatastores" if match_data.length > 1
+      match_count = @original.scan(TEST_CASE_REGEX).size
+      raise Failure, "file does not have TestCaseWithDatastores" if match_count == 0
+      raise Failure, "file has more than one TestCaseWithDatastores" if match_count.length > 1
 
       # Extract the line we care about
       @lines.each_with_index do |l, index|
