@@ -97,6 +97,7 @@ class TestFile
       feature_set_cache: false, # this isn't really used yet
       memcached: false,
       redis: false,
+      country_rate_cache: false,
     }
     @modules = []
     @success = false
@@ -163,6 +164,10 @@ class TestFile
           end
           if output.match(/ use_feature_set_cache /) && !@macros[:feature_set_cache]
             @macros[:feature_set_cache] = true
+            change = true
+          end
+          if output.match(/ use_country_rate_cache /) && !@macros[:country_rate_cache]
+            @macros[:country_rate_cache] = true
             change = true
           end
           if !change && !@macros[:active_record_fixtures]
