@@ -16,6 +16,7 @@ if [ $SPIN ]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
   fi
 
+  cp -v .vimrc ~/.vimrc
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
   cp -v .zlogin ~/.zlogin
@@ -35,6 +36,7 @@ elif [[ $OSTYPE == 'darwin'* ]]; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
   fi
 
+  cp -v .vimrc ~/.vimrc
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
 
@@ -49,6 +51,7 @@ elif grep -q Ubuntu /etc/issue; then
     git clone https://github.com/zsh-users/zsh-autosuggestions "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
   fi
 
+  cp -v .vimrc ~/.vimrc
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
 
