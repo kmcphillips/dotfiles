@@ -85,6 +85,26 @@ class TestFile
       "assert_audit_log",
       "enable_audit_events",
     ],
+    "GatewayTesting" => [
+      "mock_paypal_express",
+      "stub_paypal_express_connection_error",
+      "mock_payflow_express",
+      "mock_paypal_in_context_paypal_express",
+      "add_paypal_express",
+      "add_manual_gateway",
+      "add_shopify_payments",
+      "add_gateway",
+      "add_existing_gateway",
+      "process_options",
+      "add_gateway_to_shop",
+      "add_sofort",
+      "preload_shop_sharded_associations",
+    ],
+    "ProductTestHelper" => [
+      "valid_product_attributes",
+      "valid_variant_attributes",
+      "create_products_with_id",
+    ],
   }
 
   attr_reader :message, :filename
