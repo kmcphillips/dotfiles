@@ -105,6 +105,10 @@ class TestFile
       "valid_variant_attributes",
       "create_products_with_id",
     ],
+    "FeatureSetMockTestHelper" => [
+      "stub_beta_flags",
+      "mock_feature_set",
+    ],
   }
 
   attr_reader :message, :filename
