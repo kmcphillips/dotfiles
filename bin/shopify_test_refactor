@@ -115,7 +115,23 @@ class TestFile
       "cache was not flushed but was expected to be",
       "cache was flushed but was not expected to be",
     ],
+    "BackgroundQueue::HedwigJobBehaviourFaker" => [
+      "DEPRECATION WARNING: Pipelining commands on a Redis",
+    ],
   }
+  GRIND_MODULES = [
+    "BackgroundQueue::HedwigJobBehaviourFaker",
+    "Resiliency::TestHelper",
+    "AsyncCacheTestHelper",
+    "IdentityCacheTestHelper",
+    "MailerTestHelper",
+    "ActiveJob::TestHelper",
+    "GatewayTesting",
+    "CreditCardHelper",
+    "ProductTestHelper",
+    "PreserveEnvTestHelper",
+    "AuditEventTestHelper",
+  ]
 
   attr_reader :message, :filename
 
@@ -130,6 +146,7 @@ class TestFile
       country_rate_cache: false,
     }
     @modules = []
+    @grind_module = nil
     @success = false
     @message = nil
     @original = nil
@@ -137,6 +154,7 @@ class TestFile
     @line = nil
     @line_number = nil
     @indent = nil
+    @revert_file = true
   end
 
   def fix
@@ -175,11 +193,14 @@ class TestFile
       # Try just switching without any macros
       rewrite_line
       output, success = run_test
+      grind_module_index = nil
 
       # Then grind out the macros
       if !success
         loop do
           change = false
+          @grind_module = nil
+
           if output.match(/ use_redis /) && !@macros[:redis]
             @macros[:redis] = true
             change = true
@@ -211,6 +232,17 @@ class TestFile
             end
           end
           if !change
+            if grind_module_index == nil
+              grind_module_index = 0
+              @grind_module = GRIND_MODULES[grind_module_index]
+              change = true
+            else
+              grind_module_index += 1
+              @grind_module = GRIND_MODULES[grind_module_index]
+              change = true if @grind_module
+            end
+          end
+          if !change
             raise Failure, "cannot figure out how to update test #{ @macros.inspect } #{ @modules.inspect }"
           end
 
@@ -223,11 +255,11 @@ class TestFile
 
       @success = true
     rescue Failure => e
-      revert_file
+      revert_file if @revert_file
       @success = false
       @message = e.message
     ensure
-      revert_file unless @success
+      revert_file if !@success && @revert_file
     end
   end
 
@@ -244,19 +276,20 @@ class TestFile
   end
 
   def rewrite_line
+    modules = (@modules + [ @grind_module ]).compact.uniq.sort
     replacement = " < ActiveSupport::TestCase"
     if @macros.values.any?
       @macros.each do |macro, val|
         replacement = "#{ replacement }\n#{ ' ' * @indent }use_#{ macro }" if val
       end
     end
-    if @modules.any?
+    if modules.any?
       replacement = "#{ replacement }\n" if @macros.values.any?
-      @modules.uniq.each do |module_name|
+      modules.uniq.each do |module_name|
         replacement = "#{ replacement }\n#{ ' ' * @indent }include #{ module_name }"
       end
     end
-    replacement = "#{ replacement }\n" unless @modules.any?
+    replacement = "#{ replacement }\n" unless modules.any?
     @lines[@line_number] = @line.sub(TEST_CASE_REGEX, replacement)
     write_file
   end
