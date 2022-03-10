@@ -109,6 +109,12 @@ class TestFile
       "stub_beta_flags",
       "mock_feature_set",
     ],
+    "AsyncCacheTestHelper" => [
+      "haven't been flushed",
+      "have been flushed",
+      "cache was not flushed but was expected to be",
+      "cache was flushed but was not expected to be",
+    ],
   }
 
   attr_reader :message, :filename
