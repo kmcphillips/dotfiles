@@ -118,6 +118,27 @@ class TestFile
     "BackgroundQueue::HedwigJobBehaviourFaker" => [
       "DEPRECATION WARNING: Pipelining commands on a Redis",
     ],
+    "CreditCardHelper" => [
+      "credit_card_hash",
+      "vault_credit_card_hash",
+      "credit_card",
+      "checkout_credit_card",
+      "valid_visa_hash",
+      "valid_vault_visa_hash",
+      "valid_shopify_pay_vault_bogus_hash",
+      "valid_bogus_hash",
+      "valid_vault_bogus_hash",
+      "invalid_credit_card_hash",
+      "invalid_vault_credit_card_hash",
+      "new_valid_visa",
+      "new_valid_bogus",
+      "new_valid_checkout_bogus",
+      "valid_billing_address_hash",
+    ],
+    "IdentityCacheTestHelper" => [
+      "miss_then_hit_with_model_and_id",
+      "miss_then_hit_with_model_and_method_and_args",
+    ],
   }
   GRIND_MODULES = [
     "BackgroundQueue::HedwigJobBehaviourFaker",
@@ -131,6 +152,7 @@ class TestFile
     "ProductTestHelper",
     "PreserveEnvTestHelper",
     "AuditEventTestHelper",
+    "TestData::CartFixtures",
   ]
 
   attr_reader :message, :filename
