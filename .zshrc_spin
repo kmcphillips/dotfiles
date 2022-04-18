@@ -2,5 +2,6 @@ export PROMPT="🌀 $PROMPT"
 export PATH="$PATH:$HOME/dotfiles/bin"
 
 alias shupdate="git checkout main && git pull && update && git checkout -"
+alias shupdatestash="git add . && git stash && git checkout main && git pull && update && git checkout - && git stash apply && git reset ."
 
 alias refresh_secrets="systemctl restart gcs-secrets.service && systemctl restart template-config.service"
