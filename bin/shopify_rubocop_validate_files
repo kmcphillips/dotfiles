@@ -17,9 +17,10 @@ require "open3"
 class TodoFile
   attr_reader :lines
 
-  def initialize(filename)
+  def initialize(filename, cops: nil)
     @filename = filename
     @lines = File.readlines(@filename)
+    @only_cops = Array(cops).reject(&:blank?)
   end
 
   def process_file
@@ -39,7 +40,7 @@ class TodoFile
         if line.blank?
           parse_state = :meta
           current_cop = nil
-        elsif ignore_cop?(current_cop)
+        elsif !check_cop?(current_cop)
           # do nothing
         elsif match_data = line.match(/    - '?([^']+)'?/)
           filename = match_data[1]
@@ -56,6 +57,16 @@ class TodoFile
   end
 
   private
+
+  def check_cop?(cop)
+    if ignore_cop?(cop)
+      false
+    elsif @only_cops.blank?
+      true
+    else
+      @only_cops.include?(cop)
+    end
+  end
 
   def ignore_cop?(cop)
     ["Cops/ComponentNamespace"].include?(cop)
@@ -110,9 +121,11 @@ class TestRefactorRunner
     raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
     raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
 
-    logger.info("Starting")
+    starting_message = "Starting checking #{ ARGV.any? ? ARGV.to_sentence : "all cops" }"
+    logger.info(starting_message)
+    puts Rainbow(starting_message).aqua
 
-    TodoFile.new(rubocop_todo_file).process_file do |filename, line_number, cop|
+    TodoFile.new(rubocop_todo_file, cops: ARGV).process_file do |filename, line_number, cop|
       file = ValidateFile.new(filename)
 
       print "#{ cop } #{ filename } "
@@ -126,6 +139,7 @@ class TestRefactorRunner
     end
 
     logger.info("Finished")
+    puts Rainbow("Finished").aqua
   end
 
   private
