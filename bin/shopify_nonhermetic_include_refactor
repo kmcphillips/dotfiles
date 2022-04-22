@@ -317,9 +317,9 @@ class TestFile
       str = [macros_block, modules_block].reject(&:blank?).join("\n\n")
 
       if modules.any? && line_at(+1).match?(/\A\s*include/)
-        str = "#{ str }\n"
+        # leave no blank line
       else
-        str = "#{ str }\n\n"
+        str = "#{ str }\n"
       end
 
       str
