@@ -14,6 +14,58 @@ require "active_support/core_ext"
 require "logger"
 require "open3"
 
+class TodoFile
+  attr_reader :lines, :cop
+
+  def initialize(filename, resume_filename: nil, cop:)
+    @filename = filename
+    @lines = File.readlines(@filename)
+    @resume_filename = resume_filename.presence
+    @cop = cop
+  end
+
+  def process_file
+    parse_state = :before
+
+    (0..(@lines.length)).each do |line_number|
+      line = @lines[line_number]
+
+      case parse_state
+      when :before
+        if line.start_with?(cop)
+          parse_state = if @resume_filename
+            :resuming
+          else
+            :processing
+          end
+        end
+      when :processing, :resuming
+        if line.blank?
+          parse_state = :done
+        elsif match_data = line.match(/    - '(.+)'/)
+          filename = match_data[1]
+          parse_state = :processing if parse_state == :resuming && filename == @resume_filename
+          if parse_state == :processing
+            success = yield(filename, line_number)
+            if success
+              @lines[line_number] = "##{ line }"
+              write_file
+            end
+          end
+        end
+      when :done
+        # just consume and finish
+      end
+    end
+  end
+
+  private
+
+  def write_file
+    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+  end
+end
+
 class TestFile
   class Failure < StandardError ; end
 
@@ -272,7 +324,7 @@ class TestFile
   end
 
   def write_file
-    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+    File.open(@filename, "w") { |f| f.write(@lines.reject(&:blank?).join("")) }
   end
 
   def revert_file
@@ -281,10 +333,11 @@ class TestFile
 end
 
 class RefactorRunner
-  attr_reader :project_name
+  attr_reader :project_name, :cop
 
-  def initialize(project_name)
+  def initialize(project_name, cop:)
     @project_name = project_name
+    @cop = cop
   end
 
   def run
@@ -292,12 +345,9 @@ class RefactorRunner
     puts Rainbow("Starting #{ project_name }").aqua
 
     raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
-    raise "First arg must be a file listing test file locations" if ARGV[0].blank? || !File.exist?(ARGV[0])
+    raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
 
-    File.readlines(ARGV[0]).each do |line|
-      next if line.blank?
-      filename = line.strip
-
+    TodoFile.new(rubocop_todo_file, resume_filename: ARGV[0], cop: cop).process_file do |filename, line_number|
       file = TestFile.new(filename)
 
       print "#{ filename } "
@@ -319,6 +369,7 @@ class RefactorRunner
   private
 
   def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
+  def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
   def log_file = "#{ project_root }/#{ project_name }.log"
 
   def logger
@@ -330,4 +381,4 @@ class RefactorRunner
   end
 end
 
-RefactorRunner.new(:nonhermetic_include_refactor).run
+RefactorRunner.new(:nonhermetic_include_refactor, cop: "Cops/TestCaseIncludesNonhermeticTestHelper").run
