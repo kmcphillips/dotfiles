@@ -332,7 +332,7 @@ class TestFile
   def line_at(offset) = @lines[@line_number + offset]
 
   def write_file
-    File.open(@filename, "w") { |f| f.write(@lines.reject(&:blank?).join("")) }
+    File.open(@filename, "w") { |f| f.write(@lines.reject(&:nil?).join("")) }
   end
 
   def revert_file
