@@ -316,9 +316,16 @@ class TestFile
 
       str = [macros_block, modules_block].reject(&:blank?).join("\n\n")
 
-      if modules.any? && line_at(+1).match?(/\A\s*include/)
-        # leave no blank line
-      else
+      next_line_blank = line_at(+1).blank?
+      want_a_blank_line = modules.any? && line_at(+1).match?(/\A\s*include/)
+
+      if want_a_blank_line && !next_line_blank
+        str = "#{ str }\n\n"
+      elsif want_a_blank_line && next_line_blank
+        str = "#{ str }\n"
+      elsif !want_a_blank_line && next_line_blank
+        # use the existing blank line
+      else # !want_a_blank_line && !next_line_blank
         str = "#{ str }\n"
       end
 
