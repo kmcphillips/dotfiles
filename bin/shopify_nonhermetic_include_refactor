@@ -155,7 +155,7 @@ class TestFile
     "ActiveJob::TestHelper",
     "GatewayTesting",
     "CreditCardHelper",
-    "ProductTestHelper",
+    "Merchandising::ProductTestHelper",
     "PreserveEnvTestHelper",
     "AuditEventTestHelper",
     "TestData::CartFixtures",
@@ -263,13 +263,13 @@ class TestFile
           if !change
             if grind_module_index == nil
               grind_module_index = 0
-              @grind_module = GRIND_MODULES[grind_module_index]
-              change = true
             else
               grind_module_index += 1
-              @grind_module = GRIND_MODULES[grind_module_index]
-              change = true if @grind_module
             end
+
+            # Speed improvement: could check @modules.include?(GRIND_MODULES[grind_module_index]) and skip it
+            @grind_module = GRIND_MODULES[grind_module_index]
+            change = true if @grind_module
           end
           if !change
             raise Failure, "cannot figure out how to update test #{ @macros.inspect } #{ @modules.inspect }"
