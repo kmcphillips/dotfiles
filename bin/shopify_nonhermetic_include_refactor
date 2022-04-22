@@ -306,22 +306,30 @@ class TestFile
 
   def rewrite_line
     modules = (@modules + [ @grind_module ]).compact.uniq.sort
-    replacement = ""
-    if @macros.values.any?
-      @macros.each do |macro, val|
-        replacement = "#{ replacement }\n#{ ' ' * @indent }use_#{ macro }" if val
+    macros = @macros.map { |macro, val| "use_#{ macro }" if val }.compact
+
+    replacement = if modules.blank? && macros.blank?
+      nil
+    else
+      macros_block = macros.map { |m| "#{ ' ' * @indent }#{ m }" }.join("\n")
+      modules_block = modules.map { |m| "#{ ' ' * @indent }include #{ m }" }.join("\n")
+
+      str = [macros_block, modules_block].reject(&:blank?).join("\n\n")
+
+      if modules.any? && line_at(+1).match?(/\A\s*include/)
+        str = "#{ str }\n"
+      else
+        str = "#{ str }\n\n"
       end
+
+      str
     end
-    if modules.any?
-      replacement = "#{ replacement }\n" if @macros.values.any?
-      modules.uniq.each do |module_name|
-        replacement = "#{ replacement }\n#{ ' ' * @indent }include #{ module_name }"
-      end
-    end
-    replacement = "#{ replacement }\n" unless modules.any?
-    @lines[@line_number] = @line.sub(MODULE_INCLUDE_REGEX, replacement)
+
+    @lines[@line_number] = replacement
     write_file
   end
+
+  def line_at(offset) = @lines[@line_number + offset]
 
   def write_file
     File.open(@filename, "w") { |f| f.write(@lines.reject(&:blank?).join("")) }
