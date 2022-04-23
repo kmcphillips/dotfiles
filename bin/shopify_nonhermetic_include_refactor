@@ -42,7 +42,7 @@ class TodoFile
       when :processing, :resuming
         if line.blank?
           parse_state = :done
-        elsif match_data = line.match(/    - '(.+)'/)
+        elsif match_data = line.match(/^    - '(.+)'/)
           filename = match_data[1]
           parse_state = :processing if parse_state == :resuming && filename == @resume_filename
           if parse_state == :processing
