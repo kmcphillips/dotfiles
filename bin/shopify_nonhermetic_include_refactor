@@ -375,6 +375,8 @@ class RefactorRunner
         puts Rainbow(file.message.presence || "failure").red
         logger.error("#{ filename } #{ file.message }")
       end
+
+      file.success?
     end
 
     logger.info("Finished #{ project_name }")
