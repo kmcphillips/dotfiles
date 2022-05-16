@@ -101,7 +101,7 @@ class TestFile
       "add_sofort",
       "preload_shop_sharded_associations",
     ],
-    "ProductTestHelper" => [
+    "Merchandising::ProductTestHelper" => [
       "valid_product_attributes",
       "valid_variant_attributes",
       "create_products_with_id",
