@@ -1,0 +1,33 @@
+#!/usr/bin/env ruby
+
+require_relative 'include/shopify_refactor'
+
+MODULE_INCLUDE_REGEX = /include CountryPricingTestHelper/
+UPDATED_MODULE_INCLUDE = "include DequeueDecoratorTestHelper"
+
+FileListRefactorRunner.new(:country_pricing_refactor, files: ARGV).run do |filename|
+  raise Failure, "file does not exist" unless File.exist?(filename)
+
+  original = File.read(filename)
+
+  match_count = original.scan(MODULE_INCLUDE_REGEX).size
+  raise Failure, "file does not include CountryPricingTestHelper" if match_count == 0
+  raise Failure, "file has more than one include of CountryPricingTestHelper" if match_count > 1
+
+  stdout, stderr, status = Open3.capture3("git blame #{ filename }")
+  raise Failure, "git blame failed" unless status.success?
+
+  line = stdout.split("\n").find { |l| l.match?(MODULE_INCLUDE_REGEX) }
+  raise Failure, "could not find line in blame" unless line
+  raise Failure, "line does not blame to me" unless line.include?("Kevin McPhillips")
+
+  File.open(filename, "w") { |f| f.write(original.sub(MODULE_INCLUDE_REGEX, UPDATED_MODULE_INCLUDE)) }
+  stdout, stderr, status = Open3.capture3("bin/test #{ filename }")
+
+  if status.success?
+    "test updated to use DequeueDecoratorTestHelper"
+  else
+    File.open(filename, "w") { |f| f.write(original) }
+    raise Failure, "test failed when updated to DequeueDecoratorTestHelper"
+  end
+end
