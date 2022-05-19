@@ -2,7 +2,7 @@
 rubocop_filename = "#{ Dir.home }/src/github.com/Shopify/shopify/.rubocop_todo.yml"
 entries = []
 current = nil
-result_limit = 12
+result_limit = nil
 
 File.foreach(rubocop_filename).with_index do |line, line_num|
   # new entry
@@ -29,6 +29,9 @@ if ARGV.any? { |a| a.match(/auto/) }
   puts "Matching on --auto-complete only"
 end
 
-output_entries.sort_by { |e| e[:count] }.first(result_limit).each do |e|
+output_entries = output_entries.sort_by { |e| e[:count] }
+output_entries = output_entries.first(result_limit) if result_limit
+
+output_entries.each do |e|
   puts "#{ e[:cop] }\n  offense count #{ e[:count] }#{ e[:auto_correct] ? ' --auto-correct' : '' }"
 end
