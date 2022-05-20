@@ -1,81 +1,6 @@
 #!/usr/bin/env ruby
-# frozen_string_literal: true
 
-require "bundler/inline"
-
-gemfile do
-  source "https://rubygems.org"
-  gem "activesupport", "< 7.0"
-  gem "rainbow"
-end
-
-require "active_support"
-require "active_support/core_ext"
-require "logger"
-require "open3"
-
-class TodoFile
-  attr_reader :lines
-
-  def initialize(filename, cops: nil)
-    @filename = filename
-    @lines = File.readlines(@filename)
-    @only_cops = Array(cops).reject(&:blank?)
-  end
-
-  def process_file
-    parse_state = :meta
-    current_cop = nil
-
-    (0..(@lines.length)).each do |line_number|
-      line = @lines[line_number]
-
-      case parse_state
-      when :meta
-        if line.start_with?(/[a-zA-Z]/) && !line.start_with?("require:")
-          parse_state = :cop
-          current_cop = line.split(":")[0].strip
-        end
-      when :cop
-        if line.blank?
-          parse_state = :meta
-          current_cop = nil
-        elsif !check_cop?(current_cop)
-          # do nothing
-        elsif match_data = line.match(/    - '?([^']+)'?/)
-          filename = match_data[1]
-          @lines[line_number] = "##{ line }"
-          write_file
-          success = yield(filename, line_number, current_cop)
-          if !success
-            @lines[line_number] = line
-            write_file
-          end
-        end
-      end
-    end
-  end
-
-  private
-
-  def check_cop?(cop)
-    if ignore_cop?(cop)
-      false
-    elsif @only_cops.blank?
-      true
-    else
-      @only_cops.include?(cop)
-    end
-  end
-
-  def ignore_cop?(cop)
-    ["Cops/ComponentNamespace"].include?(cop)
-  end
-
-  def write_file
-    File.open(@filename, "w") { |f| f.write(@lines.join("")) }
-  end
-end
+require_relative 'include/shopify_refactor'
 
 class ValidateFile
   attr_reader :message, :filename
@@ -116,44 +41,15 @@ class ValidateFile
   end
 end
 
-class TestRefactorRunner
-  def run
-    raise "Project root does not exist #{ project_root }" unless File.exist?(project_root)
-    raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
+RubocopRefactorRunner.new(:name, cop: ARGV[0], only_filenames: ARGV.drop(1)).run do |filename, context|
+  file = ValidateFile.new(filename)
 
-    starting_message = "Starting checking #{ ARGV.any? ? ARGV.to_sentence : "all cops" }"
-    logger.info(starting_message)
-    puts Rainbow(starting_message).aqua
+  print "#{ context.cop } #{ filename } "
+  file.validate
 
-    TodoFile.new(rubocop_todo_file, cops: ARGV).process_file do |filename, line_number, cop|
-      file = ValidateFile.new(filename)
+  colour = file.success? ? :green : :red
+  puts Rainbow(file.message).send(colour)
+  context.logger.info("#{ filename } #{ file.message }")
 
-      print "#{ cop } #{ filename } "
-      file.validate
-
-      colour = file.success? ? :green : :red
-      puts Rainbow(file.message).send(colour)
-      logger.info("#{ filename } #{ file.message }")
-
-      file.success?
-    end
-
-    logger.info("Finished")
-    puts Rainbow("Finished").aqua
-  end
-
-  private
-
-  def project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
-  def rubocop_todo_file = "#{ project_root }/.rubocop_todo.yml"
-
-  def logger
-    @logger ||= begin
-      logger_file = File.open("#{ project_root }/validate_files.log", File::WRONLY | File::APPEND | File::CREAT)
-      logger_file.sync = true
-      Logger.new(logger_file, level: Logger::INFO)
-    end
-  end
+  file.success?
 end
-
-TestRefactorRunner.new.run

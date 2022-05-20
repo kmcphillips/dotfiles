@@ -5,7 +5,7 @@ require_relative 'include/shopify_refactor'
 MODULE_INCLUDE_REGEX = /include CountryPricingTestHelper/
 UPDATED_MODULE_INCLUDE = "include DequeueDecoratorTestHelper"
 
-FileListRefactorRunner.new(:country_pricing_refactor, files: ARGV).run do |filename|
+FileListRefactorRunner.new(:country_pricing_refactor, files: ARGV).run do |filename, context|
   raise Failure, "file does not exist" unless File.exist?(filename)
 
   original = File.read(filename)

@@ -18,10 +18,11 @@ class Failure < StandardError ; end
 class RubocopTodoFile
   attr_reader :lines, :cop
 
-  def initialize(filename, resume_filename: nil, cop:)
+  def initialize(filename, resume_filename: nil, only_filenames: nil, cop:)
     @filename = filename
     @lines = File.readlines(@filename)
     @resume_filename = resume_filename.presence
+    @only_filenames = Array(only_filenames)
     @cop = cop
   end
 
@@ -47,10 +48,12 @@ class RubocopTodoFile
           filename = match_data[1]
           parse_state = :processing if parse_state == :resuming && filename == @resume_filename
           if parse_state == :processing
-            success = yield(filename, line_number)
-            if success
-              @lines[line_number] = "##{ line }"
-              write_file
+            if @only_filenames.empty? || @only_filenames.include?(filename)
+              success = yield(filename, line_number)
+              if success
+                @lines[line_number] = "##{ line }"
+                write_file
+              end
             end
           end
         end
@@ -66,6 +69,16 @@ class RubocopTodoFile
 
   def write_file
     File.open(@filename, "w") { |f| f.write(@lines.join("")) }
+  end
+end
+
+class Context
+  attr_reader :line_number, :logger, :cop
+
+  def initialize(line_number: nil, cop: nil, logger: nil)
+    @line_number = line_number
+    @cop = cop
+    @logger = logger
   end
 end
 
@@ -108,12 +121,14 @@ class BaseRefactorRunner
 end
 
 # Usage
-#     RubocopRefactorRunner.new(:name, cop: "Cop/Name").run do |filename, line_number|
+#     RubocopRefactorRunner.new(:name, cop: "Cop/Name").run do |filename, context|
 class RubocopRefactorRunner < BaseRefactorRunner
-  attr_reader :cop
+  attr_reader :cop, :resume_filename, :only_filenames
 
-  def initialize(project_name, cop:)
+  def initialize(project_name, cop:, resume_filename: nil, only_filenames: nil)
     super(project_name)
+    @resume_filename = resume_filename
+    @only_filenames = only_filenames
     @cop = cop
   end
 
@@ -122,8 +137,23 @@ class RubocopRefactorRunner < BaseRefactorRunner
   def run_file
     raise "Rubocop todo file does not exist #{ rubocop_todo_file }" unless File.exist?(rubocop_todo_file)
 
-    RubocopTodoFile.new(rubocop_todo_file, resume_filename: ARGV[0], cop: cop).process_file do |filename, line_number|
-      yield(filename, line_number)
+    starting_message = if only_filenames.empty?
+      "Processing #{ cop } on all files"
+    else
+      "Processing #{ cop } on only #{ only_filenames.count } files"
+    end
+
+    logger.info(starting_message)
+    puts Rainbow(starting_message).aqua
+
+    RubocopTodoFile.new(rubocop_todo_file, cop: cop, resume_filename: resume_filename, only_filenames: only_filenames).process_file do |filename, line_number|
+      context = Context.new(
+        line_number: line_number,
+        logger: logger,
+        cop: cop,
+      )
+
+      yield(filename, context)
     end
   end
 
@@ -131,7 +161,7 @@ class RubocopRefactorRunner < BaseRefactorRunner
 end
 
 # Usage
-#     FileListRefactorRunner.new(:name, files: ARGV).run do |filename|
+#     FileListRefactorRunner.new(:name, files: ARGV).run do |filename, context|
 #       if do_something(filename)
 #         "the success message"
 #       else
@@ -155,7 +185,7 @@ class FileListRefactorRunner < BaseRefactorRunner
       print "#{ filename } "
 
       begin
-        message = yield(filename)
+        message = yield(filename, Context.new(logger: logger))
         success = true
       rescue Failure => e
         success = false
