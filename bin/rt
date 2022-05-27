@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ $# -eq 0 ]; then
+  echo "No test file provided"
+  exit 1
+fi
+
+bin/rubocop $1
+
+if [ $? -eq 0 ]; then
+  if [ $# -gt 1 ]; then
+    bin/test $1 -n /$2/
+  else
+    bin/test $1
+  fi
+fi
+
