@@ -18,11 +18,12 @@ class Failure < StandardError ; end
 class RubocopTodoFile
   attr_reader :lines, :cop
 
-  def initialize(filename, resume_filename: nil, only_filenames: nil, cop:)
+  def initialize(filename, resume_filename: nil, only_filenames: nil, comment_first: false, cop:)
     @filename = filename
     @lines = File.readlines(@filename)
     @resume_filename = resume_filename.presence
     @only_filenames = Array(only_filenames)
+    @comment_first = comment_first
     @cop = cop
   end
 
@@ -49,10 +50,20 @@ class RubocopTodoFile
           parse_state = :processing if parse_state == :resuming && filename == @resume_filename
           if parse_state == :processing
             if @only_filenames.empty? || @only_filenames.include?(filename)
-              success = yield(filename, line_number)
-              if success
+              if @comment_first
                 @lines[line_number] = "##{ line }"
                 write_file
+                success = yield(filename, line_number)
+                if !success
+                  @lines[line_number] = line
+                  write_file
+                end
+              else
+                success = yield(filename, line_number)
+                if success
+                  @lines[line_number] = "##{ line }"
+                  write_file
+                end
               end
             end
           end
@@ -123,12 +134,13 @@ end
 # Usage
 #     RubocopRefactorRunner.new(:name, cop: "Cop/Name").run do |filename, context|
 class RubocopRefactorRunner < BaseRefactorRunner
-  attr_reader :cop, :resume_filename, :only_filenames
+  attr_reader :cop, :resume_filename, :only_filenames, :comment_first
 
-  def initialize(project_name, cop:, resume_filename: nil, only_filenames: nil)
+  def initialize(project_name, cop:, resume_filename: nil, only_filenames: nil, comment_first: false)
     super(project_name)
     @resume_filename = resume_filename
     @only_filenames = only_filenames
+    @comment_first = comment_first
     @cop = cop
   end
 
@@ -146,7 +158,7 @@ class RubocopRefactorRunner < BaseRefactorRunner
     logger.info(starting_message)
     puts Rainbow(starting_message).aqua
 
-    RubocopTodoFile.new(rubocop_todo_file, cop: cop, resume_filename: resume_filename, only_filenames: only_filenames).process_file do |filename, line_number|
+    RubocopTodoFile.new(rubocop_todo_file, cop: cop, resume_filename: resume_filename, only_filenames: only_filenames, comment_first: comment_first).process_file do |filename, line_number|
       context = Context.new(
         line_number: line_number,
         logger: logger,

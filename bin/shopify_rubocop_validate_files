@@ -18,6 +18,7 @@ class ValidateFile
     else
       output, success = run_rubocop
       @success = success
+
       @message = if success
         "violation fixed"
       else
@@ -41,7 +42,7 @@ class ValidateFile
   end
 end
 
-RubocopRefactorRunner.new(:name, cop: ARGV[0], only_filenames: ARGV.drop(1)).run do |filename, context|
+RubocopRefactorRunner.new(:name, cop: ARGV[0], only_filenames: ARGV.drop(1), comment_first: true).run do |filename, context|
   file = ValidateFile.new(filename)
 
   print "#{ context.cop } #{ filename } "
