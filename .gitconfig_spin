@@ -1,4 +1,6 @@
-
+[user]
+	name = Kevin McPhillips
+	email = github@kevinmcphillips.ca
 [alias]
         co = checkout
         st = status
