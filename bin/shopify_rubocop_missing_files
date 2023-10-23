@@ -3,33 +3,24 @@ project_root = "#{ Dir.home }/src/github.com/Shopify/shopify"
 rubocop_filename = "#{ project_root }/.rubocop_todo.yml"
 
 output_lines = []
-current = :preroll
 skipped_lines = []
 
 File.foreach(rubocop_filename).with_index do |line, line_num|
-  if current == :preroll
-    current = :require if line.start_with?("require:")
-    output_lines << line
-  elsif current == :require
-    current = :consume if !line.start_with?("  -")
-    output_lines << line
-  else
-    if line.start_with?("    - ") && !line.include?("*")
-      filename = if match_data = line.match(/    - '(.+)'/)
-        match_data[1]
-      else
-        line.gsub("    - ", "").strip
-      end
-      filepath = "#{ project_root }/#{ filename }"
-
-      if File.exist?(filepath)
-        output_lines << line
-      else
-        skipped_lines << filename
-      end
+  if line.start_with?("    - ") && !line.include?("*")
+    filename = if match_data = line.match(/    - '(.+)'/)
+      match_data[1]
     else
-      output_lines << line
+      line.gsub("    - ", "").strip
     end
+    filepath = "#{ project_root }/#{ filename }"
+
+    if File.exist?(filepath)
+      output_lines << line
+    else
+     skipped_lines << filename
+    end
+  else
+    output_lines << line
   end
 end
 
