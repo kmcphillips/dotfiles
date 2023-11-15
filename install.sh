@@ -6,6 +6,8 @@ cd "$( cd "$( dirname "$0" )" && pwd )"
 if [ $SPIN ]; then
   echo 'Installing dotfiles for spin...'
 
+  sudo apt install exa -y
+
   sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
   cp -v ~/dotfiles/.zshrc ~/.zshrc
