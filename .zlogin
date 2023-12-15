@@ -1,5 +1,8 @@
 if [ "$TERM_PROGRAM" = "vscode" ]; then
   cd "${OLDPWD}"
-# elif [ ! -z "${HOME}/src/github.com/Shopify/shopify" ]; then
-#   cd "${HOME}/src/github.com/Shopify/shopify"
+else
+  SHOPIFY_REPO=$(cat /etc/spin/machine/constellation | perl -n -e'/shopify--(.*)\:/ && print $1')
+  if [ ! -z "${SHOPIFY_REPO}" ]; then
+    cd "${HOME}/src/github.com/Shopify/${SHOPIFY_REPO}"
+  fi
 fi

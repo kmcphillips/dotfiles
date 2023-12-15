@@ -5,7 +5,6 @@ cd "$( cd "$( dirname "$0" )" && pwd )"
 
 if [ $SPIN ]; then
   echo 'Installing dotfiles for spin...'
-  env > ~/.install_env # debug env at time of install
 
   sudo apt install exa -y
 
