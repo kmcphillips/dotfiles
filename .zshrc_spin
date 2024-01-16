@@ -1,8 +1,14 @@
 export PROMPT="🌀 $PROMPT"
 export PATH="$PATH:$HOME/dotfiles/bin"
 
-alias shupdate="git checkout main && git pull && update && git checkout -"
-alias shupdatestash="git add . && git stash && git checkout main && git pull && update && git checkout - && git stash apply && git reset ."
+if [ "$(cat /etc/spin/metadata/isospin_version)" = "2" ]; then
+  alias shupdate="git checkout main && git pull && dev refresh && git checkout -"
+  alias shupdatestash="git add . && git stash && git checkout main && git pull && dev refresh && git checkout - && git stash apply && git reset ."
+else
+  alias shupdate="git checkout main && git pull && update && git checkout -"
+  alias shupdatestash="git add . && git stash && git checkout main && git pull && update && git checkout - && git stash apply && git reset ."
+fi
+
 alias lastcommitfiles="git diff-tree --no-commit-id --name-only -r HEAD~0 | tr '\n' ' '"
 
 alias refresh_secrets="systemctl restart gcs-secrets.service && systemctl restart template-config.service"
