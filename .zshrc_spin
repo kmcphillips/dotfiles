@@ -10,5 +10,5 @@ else
 fi
 
 alias lastcommitfiles="git diff-tree --no-commit-id --name-only -r HEAD~0 | tr '\n' ' '"
+alias etest="RAILS_CONTEXT=essentials DISABLE_SPRING=1 bin/test"
 
-alias refresh_secrets="systemctl restart gcs-secrets.service && systemctl restart template-config.service"
