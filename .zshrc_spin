@@ -10,5 +10,7 @@ else
 fi
 
 alias lastcommitfiles="git diff-tree --no-commit-id --name-only -r HEAD~0 | tr '\n' ' '"
-alias etest="RAILS_CONTEXT=essentials DISABLE_SPRING=1 bin/test"
+alias etest="RAILS_CONTEXT=essentials bin/test"
+alias rce="RAILS_CONTEXT=essentials"
+alias rcdd"=RAILS_CONTEXT=developer_dashboard"
 
