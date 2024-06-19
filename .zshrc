@@ -141,13 +141,12 @@ alias p="git pull"
 alias gpr="git pull --rebase"
 alias gst="git status"
 alias gcm="git checkout main"
-alias gc="git commit"
 alias ga="git add -A"
-alias gca="git commit -a --amend --reuse-message=HEAD"
+alias gca="git commit --amend --reuse-message=HEAD"
+alias grm="git rebase main"
+alias grc="git rebase --continue"
 alias psg="ps ax | grep -i"
 alias be="bundle exec"
-alias rc="bin/rails console"
-alias rs="bin/rails server"
 alias h="history | grep"
 alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
 
@@ -158,3 +157,4 @@ export EDITOR=vim
 export BUNDLER_EDITOR="$(which code)"
 export GIT_MERGE_AUTOEDIT=no
 export MINITEST_DIFF="git diff --color"
+
