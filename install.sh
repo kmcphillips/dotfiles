@@ -24,6 +24,8 @@ if [ $SPIN ]; then
   cp -v .zlogin ~/.zlogin
   cat .gitconfig_spin >> ~/.gitconfig
 
+  git config advice.skippedCherryPicks false
+
   ## This doesn't work because it needs to be done in context of Shopify/shopify ruby version
   # gem install grb pry
 
