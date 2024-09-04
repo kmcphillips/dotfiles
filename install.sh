@@ -29,6 +29,10 @@ if [ $SPIN ]; then
   ## This doesn't work because it needs to be done in context of Shopify/shopify ruby version
   # gem install grb pry
 
+  git clone https://github.com/shopify/cursor-dotfiles ~/shopify-dotfiles/cursor-dotfiles
+  chmod +x ~/shopify-dotfiles/cursor-dotfiles/install.sh
+  ~/shopify-dotfiles/cursor-dotfiles/install.sh
+
 elif [[ $OSTYPE == 'darwin'* ]]; then
   echo 'Installing dotfiles for OSX..'
 
