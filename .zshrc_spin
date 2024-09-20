@@ -1,8 +1,8 @@
 export PROMPT="🌀 $PROMPT"
 export PATH="$PATH:$HOME/dotfiles/bin"
 
-alias shupdate="git checkout main && git pull && dev reup && dev restart --procs && git checkout -"
-alias shupdatestash="git add . && git stash && git checkout main && git pull && dev reup && dev restart --procs && git checkout - && git stash apply && git reset ."
+alias shupdate="git checkout main && git pull && git submodule update proto && dev reup && dev restart --procs && git checkout -"
+alias shupdatestash="git add . && git stash && git checkout main && git pull && git submodule update proto && dev reup && dev restart --procs && git checkout - && git stash apply && git reset ."
 
 alias lastcommitfiles="git diff-tree --no-commit-id --name-only -r HEAD~0 | tr '\n' ' '"
 alias etest="RAILS_CONTEXT=essentials bin/test"
