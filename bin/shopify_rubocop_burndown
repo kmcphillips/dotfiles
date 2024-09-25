@@ -13,7 +13,7 @@ File.foreach(rubocop_filename).with_index do |line, line_num|
     raise "bad offense count" unless current[:count] > 0
   elsif current.nil?
     # consume the line
-  elsif line.start_with?("# Cop supports --auto-correct")
+  elsif line.start_with?("# This cop supports safe autocorrection (--autocorrect).")
     current[:auto_correct] = true
   elsif !line.start_with?("#")
     current[:cop] = line.strip.gsub(":", "")
@@ -26,12 +26,13 @@ output_entries = entries
 
 if ARGV.any? { |a| a.match(/auto/) }
   output_entries = entries.select { |e| e[:auto_correct] }
-  puts "Matching on --auto-complete only"
+  puts "Matching on --autocorrect only"
 end
 
 output_entries = output_entries.sort_by { |e| e[:count] }
 output_entries = output_entries.first(result_limit) if result_limit
 
 output_entries.each do |e|
-  puts "#{ e[:cop] }\n  offense count #{ e[:count] }#{ e[:auto_correct] ? ' --auto-correct' : '' }"
+  puts "#{ e[:cop] }\n  offense count #{ e[:count] }#{ e[:auto_correct] ? ' --autocorrect' : '' }"
 end
+
