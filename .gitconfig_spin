@@ -4,3 +4,6 @@
 [alias]
         co = checkout
         st = status
+[submodule]
+        recurse = true
+
