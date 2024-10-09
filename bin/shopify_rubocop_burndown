@@ -24,7 +24,7 @@ end
 
 output_entries = entries
 
-if ARGV.any? { |a| a.match(/auto/) }
+if ARGV.any? { |a| a.match(/auto/) || a.match(/a/) }
   output_entries = entries.select { |e| e[:auto_correct] }
   puts "Matching on --autocorrect only"
 end

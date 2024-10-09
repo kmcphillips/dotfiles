@@ -30,20 +30,22 @@ run_file_path = "#{ root_path }/tmp/rubocop_run"
 
 exit_with "The file of filenames does not exist:\n#{run_file_path}" unless File.exist?(run_file_path)
 
-file_paths = File.readlines(run_file_path).map do |line|
-  next if line.strip.empty?
-  line = line.strip
-  next if line.start_with?("#")
-  line = line
-    .gsub(/\s*\-\s*/, "")
-    .gsub(/\A'(.*)'\z/, '\1')
-    .gsub(/\A\"(.*)\"\z/, '\1')
-
-  next unless File.exist?(line)
-  line
-end.compact
-
 Dir.chdir(root_path) do
+  file_paths = File.readlines(run_file_path).map do |line|
+    next if line.strip.empty?
+    line = line.strip
+    next if line.start_with?("#")
+    line = line
+      .gsub(/\s*\-\s+/, "")
+      .gsub(/\A'(.*)'\z/, '\1')
+      .gsub(/\A\"(.*)\"\z/, '\1')
+
+    next unless File.exist?(line)
+    line
+  end.compact.sort.uniq
+
+  exit_with "No files to run" if file_paths.empty?
+
   case action
   when :autocorrect
     puts "Running rubocop autocorrect on #{file_paths.count} files"
