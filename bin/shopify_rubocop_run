@@ -36,9 +36,10 @@ Dir.chdir(root_path) do
     line = line.strip
     next if line.start_with?("#")
     line = line
-      .gsub(/\s*\-\s+/, "")
-      .gsub(/\A'(.*)'\z/, '\1')
-      .gsub(/\A\"(.*)\"\z/, '\1')
+      .gsub(/\A\s*\-\s+/, "")
+      .gsub(/\A'(.*)'\z/, "\\1")
+      .gsub(/\A\"(.*)\"\z/, "\\1")
+      .gsub(/\A\s*modified\:\s+/, "\\1")
 
     next unless File.exist?(line)
     line
