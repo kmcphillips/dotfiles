@@ -1,0 +1,171 @@
+#!/usr/bin/env ruby
+
+require 'digest'
+
+class Cleaner
+  COMMITS = 200
+
+  FILE_PATH = ".rubocop_todo.yml"
+
+  INDIVIDUALS = [
+    {
+      email: "p1@example.com",
+      name: "P1",
+    },
+    {
+      email: "p2@example.com",
+      name: "P2",
+    },
+  ]
+
+  # Apply to all if empty
+  FILE_SELECTORS = [
+    # /components\/.+\/test\/.+/,
+  ]
+
+  # Apply to all if empty
+  TARGET_VIOLATIONS = [
+    # "Minitest/AssertEqual",
+  ]
+
+  def initialize
+    @id = Digest::MD5.hexdigest(Time.now.to_s)[0..5]
+
+    @branch = "rubocop-auto-cleanup-#{@id}"
+
+    @attempts = 0
+    @successes = 0
+
+    @files_processed = []
+  end
+
+  def clean!
+    puts "Cleanup in process!"
+    puts "ID: #{@id}"
+
+    reset_env
+    prepare_env
+
+    while @successes < COMMITS
+      @attempts += 1
+
+      puts "Attempt ##{@attempts}"
+      puts " - Successes: #{@successes}"
+      filename = cleanup_something
+
+      if filename.nil?
+        if @successes > 1
+          puts "No more candidates found. Exiting."
+          break
+        else
+          raise "No candidates found. Exiting."
+        end
+      end
+
+      if style_check
+        puts "Success!"
+
+        @successes += 1
+
+        `git add .`
+
+        commiter = INDIVIDUALS.first
+
+        message = "Rubocop auto-cleanup #{filename}"
+        INDIVIDUALS.each do |co_author|
+          next if co_author.fetch(:email) == commiter.fetch(:email)
+
+          message += "\n\nCo-authored-by: #{co_author.fetch(:name)} <#{co_author.fetch(:email)}>"
+        end
+
+        `git -c user.email=#{commiter.fetch(:email)} -c user.name='#{commiter.fetch(:name)}' commit -m "#{message}"`
+      else
+        `git reset --hard`
+      end
+    end
+
+    `git push origin #{@branch} --no-verify`
+    `git branch --set-upstream-to=origin/#{@branch} #{@branch}`
+    `git pull`
+    sleep 2
+    `open https://github.com/Shopify/shopify/compare/#{@branch}?expand=1`
+  end
+
+  private
+
+  def reset_env
+    puts "Resetting environment..."
+    `git reset --hard`
+    `git checkout main`
+    `git reset --hard origin/main`
+    `git pull origin main`
+  end
+
+  def prepare_env
+    `git checkout -b #{@branch}`
+  end
+
+  def get_candidates(lines)
+    candidates = {}
+    current_group = nil
+
+    lines.each.with_index do |line, i|
+      if match = line.match(/^(?<name>[\w\/]+):$/)
+        current_group = match[:name]
+        next
+      end
+
+      if TARGET_VIOLATIONS.length > 0 && !TARGET_VIOLATIONS.include?(current_group)
+        next
+      end
+
+      next unless line.start_with?("    - '")
+
+      filename = line[/[\w\/.]+/]
+      next if @files_processed.include?(filename)
+
+      if FILE_SELECTORS.length > 0
+        if FILE_SELECTORS.any? { |selector| line.match?(selector) }
+          candidates[i] = filename
+        end
+      else
+        candidates[i] = filename
+      end
+    end
+
+    candidates
+  end
+
+  def cleanup_something
+    lines = File.readlines(FILE_PATH)
+
+    candidates = get_candidates(lines)
+    puts " - Candidates remaining: #{candidates.keys.length}"
+
+    target_index = candidates.keys.sample
+
+    return if target_index.nil?
+
+    target_file = candidates[target_index]
+
+    @files_processed << target_file
+
+    output_lines = lines.reject.with_index do |line, i|
+      target_index == i
+    end
+
+    File.open(FILE_PATH, 'w') do |f|
+      output_lines.each do |line|
+        f.write(line)
+      end
+    end
+
+    target_file
+  end
+
+  def style_check
+    system("bin/style")
+  end
+end
+
+Cleaner.new.clean!
