@@ -1,8 +1,13 @@
 #!/usr/bin/env ruby
-rubocop_filename = "#{ Dir.home }/src/github.com/Shopify/shopify/.rubocop_todo.yml"
+rubocop_filename = ".rubocop_todo.yml"
 entries = []
 current = nil
 result_limit = nil
+
+if !File.exist?(rubocop_filename)
+  puts "No .rubocop_todo.yml found. Are you in the root of the project?"
+  exit 1
+end
 
 File.foreach(rubocop_filename).with_index do |line, line_num|
   # new entry
@@ -35,4 +40,3 @@ output_entries = output_entries.first(result_limit) if result_limit
 output_entries.each do |e|
   puts "#{ e[:cop] }\n  offense count #{ e[:count] }#{ e[:auto_correct] ? ' --autocorrect' : '' }"
 end
-
