@@ -28,7 +28,10 @@ root_path = "#{ Dir.home }/src/github.com/Shopify/shopify"
 rubocop_todo_path = "#{ root_path }/.rubocop_todo.yml"
 run_file_path = "#{ root_path }/tmp/rubocop_run"
 
-exit_with "The file of filenames does not exist:\n#{run_file_path}" unless File.exist?(run_file_path)
+unless File.exist?(run_file_path)
+  FileUtils.touch(run_file_path)
+  exit_with "The file of filenames does not exist:\n#{run_file_path}\nIt has been created"
+end
 
 Dir.chdir(root_path) do
   file_paths = File.readlines(run_file_path).map do |line|
@@ -56,4 +59,3 @@ Dir.chdir(root_path) do
     system("bundle exec rubocop #{file_paths.join(" ")}")
   end
 end
-
