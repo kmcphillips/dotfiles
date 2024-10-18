@@ -1,36 +1,70 @@
 #!/usr/bin/env ruby
 
-require 'digest'
+require "digest"
+require "optparse"
+
+options = {}
+OptionParser.new do |parser|
+  parser.banner = "Usage: shopify_rubocop_auto [options] [paths]\nIf paths or violations are empty, all will be run."
+  parser.on("--name NAME",  "Name for committer")
+  parser.on("--email EMAIL",  "Email for committer")
+  parser.on("--collaborator_name NAME",  "Name for collaborator")
+  parser.on("--collaborator_email EMAIL",  "Email for collaborator")
+  parser.on("--commits COMMITS",  "Count of commits to make")
+  parser.on("--violations [VIOLATIONS]", "Names of the Rubocop violations, comma separated")
+
+  if ARGV.empty?
+    puts parser
+    exit 1
+  end
+end.parse!(into: options)
+
+paths = ARGV
+
+class Runner
+  def initialize(name:, email:, collaborator_name:, collaborator_email:, commits:, violations: nil, paths: nil)
+    @committer_name = name
+    @committer_email = email
+    @collaborator_name = collaborator_name
+    @collaborator_email = collaborator_email
+    @commits = commits.to_i
+    raise "Invalid number of commits" if @commits <= 0
+    @violations = (violations || []).split(",").map(&:strip).reject(&:empty?)
+    @violations = nil if @violations.empty?
+    @paths = paths || []
+  end
+
+  def run!
+    puts "Running with: #{@committer_name}, #{@committer_email}, #{@collaborator_name}, #{@collaborator_email}, #{@commits}, #{@violations}, #{@paths}"
+
+    Cleaner.new(
+      commits: @commits,
+      violations: @violations,
+      paths: @paths,
+      individuals: [
+        {
+          email: @committer_email,
+          name: @committer_name,
+        },
+        {
+          email: @collaborator_email,
+          name: @collaborator_name,
+        },
+      ]
+    ).clean!
+  end
+end
 
 class Cleaner
-  COMMITS = 200
-
   FILE_PATH = ".rubocop_todo.yml"
 
-  INDIVIDUALS = [
-    {
-      email: "p1@example.com",
-      name: "P1",
-    },
-    {
-      email: "p2@example.com",
-      name: "P2",
-    },
-  ]
+  def initialize(commits:, violations: nil, paths:, individuals:)
+    @commits = commits
+    @violations = violations
+    @individuals = individuals
+    @paths = paths
 
-  # Apply to all if empty
-  FILE_SELECTORS = [
-    # /components\/.+\/test\/.+/,
-  ]
-
-  # Apply to all if empty
-  TARGET_VIOLATIONS = [
-    # "Minitest/AssertEqual",
-  ]
-
-  def initialize
     @id = Digest::MD5.hexdigest(Time.now.to_s)[0..5]
-
     @branch = "rubocop-auto-cleanup-#{@id}"
 
     @attempts = 0
@@ -42,11 +76,12 @@ class Cleaner
   def clean!
     puts "Cleanup in process!"
     puts "ID: #{@id}"
+    puts "Branch: #{@branch}"
 
     reset_env
     prepare_env
 
-    while @successes < COMMITS
+    while @successes < @commits
       @attempts += 1
 
       puts "Attempt ##{@attempts}"
@@ -69,16 +104,16 @@ class Cleaner
 
         `git add .`
 
-        commiter = INDIVIDUALS.first
+        commiter = @individuals.first
 
         message = "Rubocop auto-cleanup #{filename}"
-        INDIVIDUALS.each do |co_author|
+        @individuals.each do |co_author|
           next if co_author.fetch(:email) == commiter.fetch(:email)
 
           message += "\n\nCo-authored-by: #{co_author.fetch(:name)} <#{co_author.fetch(:email)}>"
         end
 
-        `git -c user.email=#{commiter.fetch(:email)} -c user.name='#{commiter.fetch(:name)}' commit -m "#{message}"`
+        `git -c user.email=#{commiter.fetch(:email)} -c user.name="#{commiter.fetch(:name)}" commit -m "#{message}"`
       else
         `git reset --hard`
       end
@@ -115,7 +150,7 @@ class Cleaner
         next
       end
 
-      if TARGET_VIOLATIONS.length > 0 && !TARGET_VIOLATIONS.include?(current_group)
+      if @target_violations.length > 0 && !@target_violations.include?(current_group)
         next
       end
 
@@ -124,8 +159,8 @@ class Cleaner
       filename = line[/[\w\/.]+/]
       next if @files_processed.include?(filename)
 
-      if FILE_SELECTORS.length > 0
-        if FILE_SELECTORS.any? { |selector| line.match?(selector) }
+      if @paths.length > 0
+        if @paths.any? { |path| line.match?(Regexp.new(path)) }
           candidates[i] = filename
         end
       else
@@ -154,7 +189,7 @@ class Cleaner
       target_index == i
     end
 
-    File.open(FILE_PATH, 'w') do |f|
+    File.open(FILE_PATH, "w") do |f|
       output_lines.each do |line|
         f.write(line)
       end
@@ -168,4 +203,4 @@ class Cleaner
   end
 end
 
-Cleaner.new.clean!
+Runner.new(**options).run!
