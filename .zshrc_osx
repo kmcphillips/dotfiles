@@ -1,26 +1,15 @@
 # PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$HOME/bin:$HOME/opt/flutter/bin"
+export PATH="$PATH:$HOME/dotfiles/bin"
 
 # app aliases and bins
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
-if [ ! -f /usr/local/bin/code ]; then
-  ln -s "/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code" /usr/local/bin/code
-fi
-alias s='spin shell'
 
 # GPG
 #gpg-agent --daemon >/dev/null 2>&1
-export GPG_TTY=$(tty)
-
-# dev
-[ -f /opt/dev/dev.sh ] && source /opt/dev/dev.sh
+# export GPG_TTY=$(tty)
 
 # test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
-
-export PATH="$HOME/.yarn/bin:$PATH"
-if [ -e /Users/kevin/.nix-profile/etc/profile.d/nix.sh ]; then . /Users/kevin/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
-chruby 2.7.1
 
 export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
