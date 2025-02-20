@@ -2,6 +2,9 @@
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$HOME/bin:$HOME/opt/flutter/bin"
 export PATH="$PATH:$HOME/dotfiles/bin"
 
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # app aliases and bins
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 
