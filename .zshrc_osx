@@ -5,6 +5,9 @@ export PATH="$PATH:$HOME/dotfiles/bin"
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
+# rbenv
+eval "$(rbenv init - --no-rehash zsh)"
+
 # app aliases and bins
 alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 
