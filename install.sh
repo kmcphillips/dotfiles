@@ -9,6 +9,8 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   # Install oh-my-zsh
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+  else
+    echo "oh-my-zsh already installed"
   fi
 
   cp -v .zshrc ~/.zshrc
@@ -22,7 +24,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   cp -v .vimrc ~/.vimrc
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
-  cp -v .gitconfig >> ~/.gitconfig
+  cp -v .gitconfig ~/.gitconfig
 
 elif grep -q Ubuntu /etc/issue; then
   echo 'Installing dotfiles for Ubuntu...'

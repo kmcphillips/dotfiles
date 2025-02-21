@@ -136,6 +136,9 @@ HISTSIZE=50000
 
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=6'
 
+# Homebrew
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
 # Personal aliases
 alias p="git pull"
 alias gpr="git pull --rebase"
@@ -154,7 +157,7 @@ alias rmorig="find . -iname '*.orig' -exec rm -v '{}' \;"
 unalias grb
 
 export EDITOR=vim
-export BUNDLER_EDITOR="$(which code)"
+export BUNDLER_EDITOR="$(which cursor)"
 export GIT_MERGE_AUTOEDIT=no
 export MINITEST_DIFF="git diff --color"
 
