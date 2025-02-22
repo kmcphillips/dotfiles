@@ -1,0 +1,13 @@
+#!/bin/bash
+
+IP_ADDRESS=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+
+if [[ $IP_ADDRESS =~ 192\.168\.1\. ]]; 
+then 
+  echo "Connecting from local network..."
+  ssh kevin@quasar
+else 
+  echo "Connecting from external network..."
+  ssh -p 2222 kevin@home.kev.cool
+fi
+
