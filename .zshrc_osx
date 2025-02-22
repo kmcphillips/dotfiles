@@ -1,6 +1,6 @@
 # PATH
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin:$HOME/bin:$HOME/opt/flutter/bin"
-export PATH="$PATH:$HOME/dotfiles/bin"
+export PATH="$PATH:$HOME/source/dotfiles/bin"
 
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
