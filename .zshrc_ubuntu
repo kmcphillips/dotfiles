@@ -21,3 +21,5 @@ if [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
   export PROMPT="🏠 $PROMPT"
 fi
 
+eval "$(~/.local/bin/mise activate zsh)"
+
