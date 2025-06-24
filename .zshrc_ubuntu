@@ -23,3 +23,6 @@ fi
 
 eval "$(~/.local/bin/mise activate zsh)"
 
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh)"
+
