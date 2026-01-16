@@ -1,0 +1,104 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+format = """
+$hostname\
+$directory\
+$git_branch$git_status\
+$dart$python$ruby$cpp$c$golang$mise\
+$docker_context\
+$sudo\
+$character\
+"""
+
+# custom git status on modified/clean https://github.com/starship/starship/issues/6075
+
+add_newline = false
+
+[c]
+symbol = " "
+
+[cpp]
+symbol = " "
+
+[dart]
+symbol = " "
+
+[directory]
+read_only = " 󰌾"
+truncate_to_repo = false
+style = "green"
+read_only_style = "red"
+
+[docker_context]
+symbol = " "
+
+[git_branch]
+symbol = " "
+format = '\([$symbol$branch(:$remote_branch)]($style)'
+
+[git_status]
+format = '[$modified]($style)\) '
+style = "bold red"
+modified = " ✗"
+up_to_date = ""
+untracked = ""
+staged = ""
+conflicted = ""
+deleted = ""
+renamed = ""
+stashed = ""
+ahead = ""
+behind = ""
+diverged = ""
+
+[git_commit]
+tag_symbol = '  '
+
+[golang]
+symbol = " "
+
+[hostname]
+ssh_only = true
+format = '[$ssh_symbol]($style)'
+ssh_symbol = " "
+
+[nodejs]
+symbol = " "
+
+[package]
+symbol = "󰏗 "
+
+[python]
+symbol = " "
+
+[ruby]
+format = '[$symbol($version )]($style)'
+symbol = " "
+
+[status]
+symbol = " "
+
+[os.symbols]
+Alpine = " "
+Amazon = " "
+Android = " "
+Arch = " "
+CentOS = " "
+Debian = " "
+DragonFly = " "
+Fedora = " "
+Ios = "󰀷 "
+Linux = " "
+Macos = " "
+Manjaro = " "
+Mint = " "
+NixOS = " "
+openSUSE = " "
+Pop = " "
+Raspbian = " "
+Redhat = " "
+RedHatEnterprise = " "
+Solus = "󰠳 "
+Ubuntu = " "
+Unknown = " "
+Windows = "󰍲 "
