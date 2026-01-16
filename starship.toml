@@ -60,6 +60,7 @@ symbol = " "
 [hostname]
 ssh_only = true
 format = '[$ssh_symbol]($style)'
+style = "bold blue"
 ssh_symbol = " "
 
 [nodejs]
