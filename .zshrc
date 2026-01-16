@@ -56,13 +56,3 @@ export EDITOR=vim
 export BUNDLER_EDITOR="$(which cursor)"
 export GIT_MERGE_AUTOEDIT=no
 export MINITEST_DIFF="git diff --color"
-
-# starship
-eval "$(starship init zsh)"
-
-# mise
-eval "$(~/.local/bin/mise activate zsh)"
-
-# atuin
-. "$HOME/.atuin/bin/env"
-eval "$(atuin init zsh)"

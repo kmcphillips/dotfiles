@@ -11,6 +11,16 @@ export LSCOLORS=GxFxCxDxBxegedabagaced
 source /opt/homebrew/opt/antidote/share/antidote/antidote.zsh
 antidote load
 
+# starship
+eval "$(starship init zsh)"
+
+# mise
+eval "$(~/.local/bin/mise activate zsh)"
+
+# atuin
+. "$HOME/.atuin/bin/env"
+eval "$(atuin init zsh)"
+
 # Homebrew
 eval "$(/opt/homebrew/bin/brew shellenv)"
 

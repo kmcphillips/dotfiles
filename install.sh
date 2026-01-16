@@ -74,7 +74,7 @@ elif grep -q Ubuntu /etc/issue; then
     curl -sS https://starship.rs/install.sh | sh
   fi
 
-  if which atuin > /dev/null 2>&1; then
+  if [ -d "$HOME/.atuin/bin" ]; then
     echo 'Atuin is installed.'
   else
     echo 'Atuin is not installed. Installing...'
@@ -82,8 +82,7 @@ elif grep -q Ubuntu /etc/issue; then
   fi
 
   FONT_DIR="$HOME/.local/share/fonts"
-  FONT_NAME="FiraCode"
-  if [ -f "$FONT_DIR/$FONT_NAME-Regular.ttf" ] || fc-list | grep -q "Fira Code"; then
+  if [ -f "$FONT_DIR/FiraCodeNerdFont-Regular.ttf" ] || fc-list | grep -q "FiraCode"; then
     echo 'FiraCode Nerd Font is installed.'
   else
     echo 'FiraCode Nerd Font is not installed. Installing...'
