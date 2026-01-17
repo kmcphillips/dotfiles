@@ -34,10 +34,6 @@ eval "$(~/.local/bin/mise activate zsh)"
 . "$HOME/.atuin/bin/env"
 eval "$(atuin init zsh)"
 
-# nvm
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-
 # fly
 export FLYCTL_INSTALL="$HOME/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
