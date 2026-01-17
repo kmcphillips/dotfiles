@@ -33,3 +33,12 @@ alias vlc='/Applications/VLC.app/Contents/MacOS/VLC'
 
 # iterm2 shell integration
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh" || true
+
+# iterm2 set tab title to the current folder
+DISABLE_AUTO_TITLE="true"
+tab_title() {
+  # echo -ne "\e]1;${PWD##*/}\a"
+  echo -ne "\e]1;${PWD/#$HOME/~}\a"
+}
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd tab_title
