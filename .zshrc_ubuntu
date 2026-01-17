@@ -22,16 +22,17 @@ antidote load
 # starship
 eval "$(starship init zsh)"
 
+# rbenv
+# I don't want to use both rbenv and mise, but I can't get Cursor and RubyLSP to work with mise. So at least this should be lower priority than mise.
+export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
+rbenv rehash >/dev/null
+
 # mise
 eval "$(~/.local/bin/mise activate zsh)"
 
 # atuin
 . "$HOME/.atuin/bin/env"
 eval "$(atuin init zsh)"
-
-# rbenv
-export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
-rbenv rehash >/dev/null
 
 # nvm
 export NVM_DIR="$HOME/.nvm"

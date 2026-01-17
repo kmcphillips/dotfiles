@@ -61,7 +61,7 @@ export MINITEST_DIFF="git diff --color"
 # -R: preserve ANSI color codes
 # -X: don't clear screen on exit
 # -F: exit if content fits on one screen
-export LESS="-R -X -F"
+export LESS="-R -X"
 if less --help 2>&1 | grep -q '\-\-mouse'; then
   export LESS="$LESS --mouse"
 fi
