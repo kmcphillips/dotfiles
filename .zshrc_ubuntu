@@ -15,6 +15,12 @@ fi
 
 alias ifconfig="ip -c a"
 
+# Terminal tab title
+precmd() {
+  print -Pn "\e]0;%~\a"
+}
+
+
 # antidote
 source "$HOME/.antidote/antidote.zsh"
 antidote load
