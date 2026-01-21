@@ -20,15 +20,14 @@ setopt append_history
 
 unsetopt MULTIOS
 
-# Initialize zsh completion system
+# completion
 autoload -Uz compinit
 compinit
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
 
 autoload colors
 colors
-
-# Enable ..<TAB> -> ../
-zstyle ':completion:*' special-dirs true
 
 typeset WORDCHARS="*?_-.[]~=&;!#$%^(){}<>"
 
