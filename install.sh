@@ -53,6 +53,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 
   mkdir -p ~/.config
   cp -v .vimrc ~/.vimrc
+  cp -v .zprofile ~/.zprofile
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
   cp -v .gitconfig ~/.gitconfig
