@@ -124,8 +124,27 @@ elif grep -q Ubuntu /etc/issue; then
     git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_DIR"
   fi
 
-  echo "TODO: Install mise"
-  echo "TODO: Install rbenv"
+  if which mise > /dev/null 2>&1; then
+    echo 'Mise is installed.'
+  else
+    echo 'Mise is not installed. Installing...'
+    # copied from: https://mise.jdx.dev/getting-started.html
+    sudo apt update -y && sudo apt install -y curl
+    sudo install -dm 755 /etc/apt/keyrings
+    curl -fSs https://mise.jdx.dev/gpg-key.pub | sudo tee /etc/apt/keyrings/mise-archive-keyring.asc 1> /dev/null
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/mise-archive-keyring.asc] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list
+    sudo apt update -y
+    sudo apt install -y mise
+  fi
+
+  if [ -d "$HOME/.rbenv" ]; then
+    pushd "$HOME/.rbenv"
+    git pull
+    popd
+  else
+    echo 'Rbenv is not installed. Installing...'
+    git clone https://github.com/rbenv/rbenv.git "$HOME/.rbenv"
+  fi
 
   mkdir -p ~/.config/atuin
 
