@@ -37,6 +37,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
     brew install --cask font-fira-code-nerd-font
   fi
 
+  # TODO: I think I can copy in an iterm2 config and a cursor config
   echo -e '\033[1;33mImportant:\033[0m Make sure iTerm2 profile is configured to use \033[1mFiraCode Nerd Font\033[0m.'
 
   if brew list antidote > /dev/null 2>&1; then
@@ -44,6 +45,20 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   else
     echo 'Antidote package manager is not installed. Installing...'
     brew install antidote
+  fi
+
+  if which mise > /dev/null 2>&1; then
+    echo 'Mise is installed.'
+  else
+    echo 'Mise is not installed. Installing...'
+    brew install mise
+  fi
+
+  if which rbenv > /dev/null 2>&1; then
+    echo 'Rbenv is installed.'
+  else
+    echo 'Rbenv is not installed. Installing...'
+    brew install rbenv
   fi
 
   cp -v .zshrc ~/.zshrc
@@ -108,6 +123,9 @@ elif grep -q Ubuntu /etc/issue; then
     echo 'Antidote repository does not exist. Cloning...'
     git clone --depth=1 https://github.com/mattmc3/antidote.git "$ANTIDOTE_DIR"
   fi
+
+  echo "TODO: Install mise"
+  echo "TODO: Install rbenv"
 
   mkdir -p ~/.config/atuin
 
