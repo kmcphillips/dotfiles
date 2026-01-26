@@ -63,12 +63,12 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_osx ~/.zshrc_osx
+  cp -v .zprofile_osx ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
 
   mkdir -p ~/.config
   cp -v .vimrc ~/.vimrc
-  cp -v .zprofile ~/.zprofile
   cp -v .gitattributes ~/.gitattributes
   cp -v .gemrc ~/.gemrc
   cp -v .gitconfig ~/.gitconfig
@@ -80,6 +80,7 @@ elif grep -q Ubuntu /etc/issue; then
 
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_ubuntu ~/.zshrc_ubuntu
+  cp -v .zprofile_ubuntu ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_ubuntu' >> ~/.zshrc
 

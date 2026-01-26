@@ -1,5 +1,3 @@
-export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/sbin"
-export PATH="$PATH:$HOME/bin"
 export PATH="$PATH:$HOME/opt/flutter/bin"
 export PATH="$PATH:$HOME/source/dotfiles/bin"
 
