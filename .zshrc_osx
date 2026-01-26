@@ -15,10 +15,6 @@ antidote load
 # starship
 eval "$(starship init zsh)"
 
-# rbenv
-# I don't want to use both rbenv and mise, but I can't get Cursor and RubyLSP to work with mise. So at least this should be lower priority than mise.
-eval "$(rbenv init - --no-rehash zsh)"
-
 # mise
 eval "$(~/.local/bin/mise activate zsh)"
 
