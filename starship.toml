@@ -34,15 +34,15 @@ symbol = " "
 
 [git_branch]
 symbol = " "
-format = '\([$symbol$branch(:$remote_branch)]($style)'
+style = "bold blue"
+format = '$symbol[$branch(:$remote_branch)]($style)'
 
 [git_status]
-format = '[$modified]($style)\) '
-style = "bold red"
-modified = " ✗"
+format = '[$modified](bold red)[$staged](bold green) '
+modified = " "
+staged = " "
 up_to_date = ""
 untracked = ""
-staged = ""
 conflicted = ""
 deleted = ""
 renamed = ""
