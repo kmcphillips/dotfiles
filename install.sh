@@ -61,9 +61,10 @@ if [[ $OSTYPE == 'darwin'* ]]; then
     brew install rbenv
   fi
 
+  cp -v .zshenv_osx ~/.zshenv
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_osx ~/.zshrc_osx
-  cp -v .zprofile_osx ~/.zprofile
+  cp -v .zprofile ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
 
@@ -78,9 +79,10 @@ if [[ $OSTYPE == 'darwin'* ]]; then
 elif grep -q Ubuntu /etc/issue; then
   echo -e '\033[1;36mInstalling dotfiles for Ubuntu\033[0m'
 
+  cp -v .zshenv_ubuntu ~/.zshenv
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_ubuntu ~/.zshrc_ubuntu
-  cp -v .zprofile_ubuntu ~/.zprofile
+  cp -v .zprofile ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_ubuntu' >> ~/.zshrc
 
