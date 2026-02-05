@@ -3,3 +3,6 @@ export PATH="$HOME/.rbenv/bin:$HOME/.rbenv/shims:$PATH"
 export PATH="$PATH:$HOME/.local/bin" # python executables from pip/pip3
 
 eval "$(rbenv init - --no-rehash zsh)"
+
+bindkey "\e[1;5C" forward-word
+bindkey "\e[1;5D" backward-word
