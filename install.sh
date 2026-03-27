@@ -5,6 +5,7 @@ set -euo pipefail
 
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
+# Mac OS X
 if [[ $OSTYPE == 'darwin'* ]]; then
   echo -e '\033[1;36mInstalling dotfiles for OSX\033[0m'
 
@@ -64,7 +65,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   cp -v .zshenv_osx ~/.zshenv
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_osx ~/.zshrc_osx
-  cp -v .zprofile ~/.zprofile
+  cp -v .zprofile_osx ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
 
@@ -75,14 +76,14 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   cp -v .gitconfig ~/.gitconfig
   cp -v starship.toml ~/.config/starship.toml
 
-
+# Ubuntu Linux
 elif grep -q Ubuntu /etc/issue; then
   echo -e '\033[1;36mInstalling dotfiles for Ubuntu\033[0m'
 
   cp -v .zshenv_ubuntu ~/.zshenv
   cp -v .zshrc ~/.zshrc
   cp -v .zshrc_ubuntu ~/.zshrc_ubuntu
-  cp -v .zprofile ~/.zprofile
+  cp -v .zprofile_ubuntu ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
   echo 'source $HOME/.zshrc_ubuntu' >> ~/.zshrc
 
@@ -156,6 +157,7 @@ elif grep -q Ubuntu /etc/issue; then
   cp -v .gemrc ~/.gemrc
   cp -v starship.toml ~/.config/starship.toml
 
+# Other
 else
   echo "Don't know how to install for this OS or env."
   echo -e '\033[1;31mAbort\033[0m'
