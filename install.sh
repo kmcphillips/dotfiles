@@ -63,11 +63,9 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   fi
 
   cp -v .zshenv_osx ~/.zshenv
-  cp -v .zshrc ~/.zshrc
-  cp -v .zshrc_osx ~/.zshrc_osx
+  cat .zshrc .zshrc_osx > ~/.zshrc
   cp -v .zprofile_osx ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
-  echo 'source $HOME/.zshrc_osx' >> ~/.zshrc
 
   mkdir -p ~/.config
   cp -v .vimrc ~/.vimrc
@@ -81,11 +79,9 @@ elif grep -q Ubuntu /etc/issue; then
   echo -e '\033[1;36mInstalling dotfiles for Ubuntu\033[0m'
 
   cp -v .zshenv_ubuntu ~/.zshenv
-  cp -v .zshrc ~/.zshrc
-  cp -v .zshrc_ubuntu ~/.zshrc_ubuntu
+  cat .zshrc .zshrc_ubuntu > ~/.zshrc
   cp -v .zprofile_ubuntu ~/.zprofile
   cp -v .zsh_plugins.txt ~/.zsh_plugins.txt
-  echo 'source $HOME/.zshrc_ubuntu' >> ~/.zshrc
 
   if which starship > /dev/null 2>&1; then
     echo 'Starship is installed.'

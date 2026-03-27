@@ -1,3 +1,5 @@
+# Mac OS X specific
+
 export PATH="$PATH:$HOME/opt/flutter/bin"
 export PATH="$PATH:$HOME/source/dotfiles/bin"
 

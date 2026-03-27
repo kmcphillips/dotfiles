@@ -1,3 +1,5 @@
+# Ubuntu Linux specific
+
 # ls colours
 alias ls='ls --color=auto'
 if command -v dircolors > /dev/null; then
