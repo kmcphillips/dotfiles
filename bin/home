@@ -1,13 +1,24 @@
 #!/bin/bash
 
+FORCE_EXTERNAL=false
+
+# -e / -f 
+# Force using external since it just detects local inet address as a simple switch.
+while getopts "fe" opt; do
+  case $opt in
+    f|e)
+      FORCE_EXTERNAL=true
+      ;;
+  esac
+done
+
 IP_ADDRESS=$(ifconfig | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
 
-if [[ $IP_ADDRESS =~ 192\.168\. ]];
-then 
+if [[ $FORCE_EXTERNAL == false && $IP_ADDRESS =~ 192\.168\. ]];
+then
   echo "Connecting from local network..."
   ssh kevin@quasar
-else 
+else
   echo "Connecting from external network..."
   ssh -p 2222 kevin@home.kev.cool
 fi
-
