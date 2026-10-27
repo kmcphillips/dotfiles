@@ -111,7 +111,7 @@ elif grep -q Ubuntu /etc/issue; then
     echo 'FiraCode Nerd Font installed successfully.'
   fi
 
-  echo -e '\033[1;33mImportant:\033[0m Make sure terminal is configured to use \033[1mFiraCode Nerd Font\033[0m.'
+  echo -e '\033[1;33mImportant:\033[0m Make sure terminal is configured to use \033[1mFiraCode Nerd Font\033[0m. Run `fc-cache -f -c` to flush font cache.'
 
   ANTIDOTE_DIR="${ZDOTDIR:-$HOME}/.antidote"
   if [ -d "$ANTIDOTE_DIR" ]; then
