@@ -35,5 +35,5 @@ export FLYCTL_INSTALL="$HOME/.fly"
 export PATH="$FLYCTL_INSTALL/bin:$PATH"
 
 # rust cargo and rv
-source $HOME/.cargo/env
+[ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
 
